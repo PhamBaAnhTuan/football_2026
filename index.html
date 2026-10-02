@@ -254,6 +254,10 @@ main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
       <button class="tab" data-act="tab" data-tab="bracket">Nhánh đấu</button>
       <button class="tab" data-act="tab" data-tab="settings">Cài đặt</button>
     </nav>
+    <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap">
+      <button class="btn sm ghost" data-act="save-folder" title="Lưu dữ liệu vào file data.json trong thư mục">📁 Lưu vào thư mục</button>
+      <button class="btn sm primary" data-act="export-excel-results" title="Xuất file Excel kết quả giải đấu & đội bóng">📊 Xuất Excel kết quả</button>
+    </div>
   </div>
 </header>
 
@@ -288,7 +292,97 @@ function load(){
   return defaultState();
 }
 let S = load();
-const save = () => localStorage.setItem(LS_KEY, JSON.stringify(S));
+let fileHandle = null;
+
+async function writeToFileHandle(dataObj){
+  if(!fileHandle) return false;
+  try{
+    const writable = await fileHandle.createWritable();
+    await writable.write(JSON.stringify(dataObj, null, 2));
+    await writable.close();
+    return true;
+  }catch(e){
+    console.warn('Cannot write to file handle', e);
+    return false;
+  }
+}
+
+const save = () => {
+  localStorage.setItem(LS_KEY, JSON.stringify(S));
+  if(fileHandle){
+    writeToFileHandle(S);
+  }
+};
+
+async function saveDataToFolder(){
+  if('showSaveFilePicker' in window){
+    try{
+      fileHandle = await window.showSaveFilePicker({
+        suggestedName: 'data.json',
+        types: [{
+          description: 'JSON File',
+          accept: { 'application/json': ['.json'] }
+        }]
+      });
+      const ok = await writeToFileHandle(S);
+      if(ok){
+        toast('Đã lưu dữ liệu vào thư mục & bật tự động đồng bộ!', 'ok');
+        return;
+      }
+    }catch(err){
+      if(err.name === 'AbortError') return;
+    }
+  }
+  const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'data.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  toast('Đã tải file data.json (hãy lưu vào thư mục dự án)', 'ok');
+}
+
+async function loadDataFromFolder(){
+  if('showOpenFilePicker' in window){
+    try{
+      const [handle] = await window.showOpenFilePicker({
+        types: [{
+          description: 'JSON File',
+          accept: { 'application/json': ['.json'] }
+        }]
+      });
+      const file = await handle.getFile();
+      const text = await file.text();
+      const p = JSON.parse(text);
+      const d = defaultState();
+      S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
+      fileHandle = handle;
+      save();
+      render();
+      toast('Đã nạp dữ liệu từ file trong thư mục!', 'ok');
+      return;
+    }catch(err){
+      if(err.name === 'AbortError') return;
+    }
+  }
+  document.getElementById('jsonInput')?.click();
+}
+
+async function autoLoadFromFolderJson(){
+  if(S.teams.length > 0 || S.groups.length > 0) return;
+  try{
+    const res = await fetch('./data.json');
+    if(res.ok){
+      const p = await res.json();
+      if(p && typeof p === 'object' && (p.teams || p.groups)){
+        const d = defaultState();
+        S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
+        save();
+        render();
+      }
+    }
+  }catch(e){}
+}
 
 let searchQ = '';
 let fStage = 'all', fGroup = 'all', fStatus = 'all';
@@ -550,6 +644,162 @@ function importExcel(file){
     }
   };
   reader.readAsArrayBuffer(file);
+}
+
+function exportExcelResults(){
+  if(typeof XLSX === 'undefined'){
+    return toast('Thư viện Excel chưa tải được. Kiểm tra kết nối mạng rồi thử lại.', 'err');
+  }
+
+  const wb = XLSX.utils.book_new();
+
+  // Sheet 1: Bảng Xếp Hạng Vòng Bảng
+  const stHead = ['BẢNG XẾP HẠNG VÒNG BẢNG'];
+  const stCols = ['STT', 'Bảng đấu', 'Tên đội bóng', 'Đội trưởng', 'Số điện thoại', 'Trận', 'Thắng', 'Hòa', 'Thua', 'BT', 'BB', 'HS', 'Điểm'];
+  const stRows = [stHead, stCols];
+  
+  if(S.groups.length > 0){
+    S.groups.forEach(g => {
+      const st = computeStandings(g.id);
+      st.forEach((r, idx) => {
+        const t = S.teams.find(x => x.id === r.id);
+        stRows.push([
+          idx + 1,
+          g.name,
+          teamName(r.id),
+          t?.captain || '—',
+          t?.phone || '—',
+          r.p, r.w, r.d, r.l, r.gf, r.ga, (r.gd > 0 ? '+' : '') + r.gd, r.pts
+        ]);
+      });
+    });
+  } else {
+    stRows.push(['Chưa có bảng đấu nào']);
+  }
+  const wsSt = XLSX.utils.aoa_to_sheet(stRows);
+  wsSt['!cols'] = [{wch:6}, {wch:12}, {wch:22}, {wch:18}, {wch:14}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:10}];
+  XLSX.utils.book_append_sheet(wb, wsSt, 'Bang Xep Hang');
+
+  // Sheet 2: Thống Kê Chi Tiết Đội Bóng
+  const tsHead = ['KẾT QUẢ & THỐNG KÊ CHI TIẾT ĐỘI BÓNG'];
+  const tsCols = ['STT', 'Tên đội bóng', 'Đội trưởng', 'Số điện thoại', 'Số TV', 'Bảng đấu', 'Tổng trận', 'Thắng', 'Hòa', 'Thua', 'BT', 'BB', 'HS', 'Vàng', 'Đỏ', 'Kết quả / Vị trí'];
+  const tsRows = [tsHead, tsCols];
+
+  const getTeamTOResult = (teamId) => {
+    const koMatches = S.matches.filter(m => m.stage === 'ko' && (m.homeId === teamId || m.awayId === teamId));
+    if(!koMatches.length) return 'Vòng bảng';
+    const finalMatch = S.matches.find(m => m.stage === 'ko' && !m.thirdPlace && m.round === Math.max(...S.matches.filter(x=>x.stage==='ko').map(x=>x.round)));
+    if(finalMatch && finalMatch.hs != null && finalMatch.as != null){
+      const w = winnerOf(finalMatch);
+      if(w === teamId) return '🏆 VÔ ĐỊCH';
+      if(w && (finalMatch.homeId === teamId || finalMatch.awayId === teamId)) return '🥈 Á QUÂN';
+    }
+    const thirdMatch = S.matches.find(m => m.thirdPlace);
+    if(thirdMatch && thirdMatch.hs != null && thirdMatch.as != null){
+      const w = winnerOf(thirdMatch);
+      if(w === teamId) return '🥉 HẠNG 3';
+      if(w && (thirdMatch.homeId === teamId || thirdMatch.awayId === teamId)) return 'HẠNG 4';
+    }
+    const maxRoundTeam = Math.max(...koMatches.map(m=>m.round));
+    const roundMatch = koMatches.find(m => m.round === maxRoundTeam);
+    return roundMatch ? (roundMatch.roundName || 'Vòng knock-out') : '—';
+  };
+
+  S.teams.forEach((t, i) => {
+    const teamGroup = S.groups.find(g => g.teamIds.includes(t.id));
+    const teamMatches = S.matches.filter(m => (m.homeId === t.id || m.awayId === t.id) && m.hs != null && m.as != null);
+    let p=0, w=0, d=0, l=0, gf=0, ga=0, y=0, r=0;
+    teamMatches.forEach(m => {
+      p++;
+      const isHome = m.homeId === t.id;
+      const myScore = isHome ? m.hs : m.as;
+      const oppScore = isHome ? m.as : m.hs;
+      gf += myScore;
+      ga += oppScore;
+      y += isHome ? (m.hy||0) : (m.ay||0);
+      r += isHome ? (m.hr||0) : (m.ar||0);
+      const winId = winnerOf(m);
+      if(winId === t.id) w++;
+      else if(winId === null && myScore === oppScore) d++;
+      else l++;
+    });
+    tsRows.push([
+      i + 1,
+      t.name,
+      t.captain || '—',
+      t.phone || '—',
+      (t.members || []).length + 1,
+      teamGroup ? teamGroup.name : '—',
+      p, w, d, l, gf, ga, (gf - ga > 0 ? '+' : '') + (gf - ga), y, r,
+      getTeamTOResult(t.id)
+    ]);
+  });
+  const wsTs = XLSX.utils.aoa_to_sheet(tsRows);
+  wsTs['!cols'] = [{wch:6}, {wch:22}, {wch:18}, {wch:14}, {wch:8}, {wch:12}, {wch:10}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:10}, {wch:10}, {wch:20}];
+  XLSX.utils.book_append_sheet(wb, wsTs, 'Thong Ke Doi Bong');
+
+  // Sheet 3: Danh Sách & Kết Quả Trận Đấu
+  const mHead = ['DANH SÁCH VÀ KẾT QUẢ CÁC TRẬN ĐẤU'];
+  const mCols = ['STT', 'Giai đoạn', 'Vòng / Bảng', 'Ngày', 'Giờ', 'Sân', 'Đội nhà', 'Tỉ số', 'Đội khách', 'Đội thắng', 'Luân lưu', 'Thẻ vàng', 'Thẻ đỏ', 'Cầu thủ xuất sắc (MVP)', 'Trọng tài', 'Ghi chú', 'Trạng thái'];
+  const mRows = [mHead, mCols];
+
+  S.matches.forEach((m, idx) => {
+    const done = m.hs != null && m.as != null;
+    const h = teamName(m.homeId), a = teamName(m.awayId);
+    const winId = winnerOf(m);
+    const winName = winId ? teamName(winId) : (done ? 'Hòa' : '—');
+    const stageName = m.stage === 'group' ? 'Vòng bảng' : 'Loại trực tiếp';
+    const subName = m.groupId ? groupName(m.groupId) : (m.roundName || '');
+    const penStr = (m.hp != null && m.ap != null) ? `${m.hp} - ${m.ap}` : '—';
+    const yellowStr = `${m.hy||0} - ${m.ay||0}`;
+    const redStr = `${m.hr||0} - ${m.ar||0}`;
+
+    mRows.push([
+      idx + 1,
+      stageName,
+      subName,
+      m.date ? fmtDate(m.date) : 'Chưa xếp',
+      m.time || '—',
+      m.pitch || '—',
+      h,
+      done ? `${m.hs} - ${m.as}` : 'Chưa đá',
+      a,
+      winName,
+      penStr,
+      yellowStr,
+      redStr,
+      m.mvp || '—',
+      m.referee || '—',
+      m.note || '—',
+      done ? 'Đã kết thúc' : 'Chưa thi đấu'
+    ]);
+  });
+  const wsM = XLSX.utils.aoa_to_sheet(mRows);
+  wsM['!cols'] = [{wch:6}, {wch:14}, {wch:14}, {wch:12}, {wch:8}, {wch:10}, {wch:20}, {wch:10}, {wch:20}, {wch:20}, {wch:12}, {wch:10}, {wch:10}, {wch:20}, {wch:16}, {wch:24}, {wch:14}];
+  XLSX.utils.book_append_sheet(wb, wsM, 'Ket Qua Tran Dau');
+
+  // Sheet 4: Danh Sách Đội & Cầu Thủ
+  const rHead = ['DANH SÁCH CÁC ĐỘI BÓNG VÀ CẦU THỦ'];
+  const rCols = ['STT', 'Tên đội bóng', 'Đội trưởng', 'Số điện thoại', 'Thành viên 1', 'Thành viên 2', 'Thành viên 3', 'Thành viên 4', 'Thành viên 5', 'Thành viên 6'];
+  const rRows = [rHead, rCols];
+
+  S.teams.forEach((t, idx) => {
+    const mems = t.members || [];
+    rRows.push([
+      idx + 1,
+      t.name,
+      t.captain || '—',
+      t.phone || '—',
+      mems[0] || '', mems[1] || '', mems[2] || '', mems[3] || '', mems[4] || '', mems[5] || ''
+    ]);
+  });
+  const wsR = XLSX.utils.aoa_to_sheet(rRows);
+  wsR['!cols'] = [{wch:6}, {wch:22}, {wch:18}, {wch:14}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}];
+  XLSX.utils.book_append_sheet(wb, wsR, 'Danh Sach Doi & Cau Thu');
+
+  const fileName = `Ket_qua_${norm(S.name).replace(/\s+/g, '_')}_${todayISO()}.xlsx`;
+  XLSX.writeFile(wb, fileName);
+  toast('Đã xuất file Excel kết quả giải đấu!', 'ok');
 }
 
 /* =========================================================
@@ -974,6 +1224,8 @@ function viewTeams(){
       <p class="muted">${S.teams.length} đội · tối đa 7 thành viên mỗi đội (bao gồm đội trưởng)</p>
     </div>
     <div class="actions">
+      <button class="btn ghost" data-act="save-folder">📁 Lưu vào thư mục</button>
+      <button class="btn ghost" data-act="export-excel-results">📊 Xuất Excel kết quả</button>
       <button class="btn ghost" data-act="template">⬇ File mẫu</button>
       <button class="btn ghost" data-act="import">⬆ Nhập Excel</button>
       <button class="btn primary" data-act="add-team">+ Thêm đội bóng</button>
@@ -1038,6 +1290,8 @@ function viewGroups(){
       <p class="muted">Chia bảng, xếp lịch và theo dõi bảng xếp hạng · Điểm: thắng ${S.settings.pointsWin} · hòa ${S.settings.pointsDraw} · thua 0</p>
     </div>
     <div class="actions">
+      <button class="btn ghost" data-act="save-folder">📁 Lưu vào thư mục</button>
+      <button class="btn ghost" data-act="export-excel-results">📊 Xuất Excel kết quả</button>
       <button class="btn ghost" data-act="auto-groups">⚙️ Chia bảng tự động</button>
       <button class="btn ghost" data-act="add-group">+ Thêm bảng</button>
       ${hasGroupMatches ? `<button class="btn danger" data-act="clear-group-schedule">Xóa lịch vòng bảng</button>` : ''}
@@ -1133,6 +1387,10 @@ function viewSchedule(){
     <div>
       <h1>Lịch thi đấu</h1>
       <p class="muted">${S.matches.length} trận · ${S.matches.filter(m=>m.hs!=null&&m.as!=null).length} đã có kết quả</p>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="save-folder">📁 Lưu vào thư mục</button>
+      <button class="btn primary" data-act="export-excel-results">📊 Xuất Excel kết quả</button>
     </div>
   </div>
 
@@ -1231,6 +1489,8 @@ function viewBracket(){
       <p class="muted">Nhấn vào một trận để nhập tỉ số</p></div>
     <div class="actions">
       ${champion ? `<span class="badge" style="padding:8px 14px;font-size:13px">🏆 Vô địch: ${esc(teamName(champion))}</span>` : ''}
+      <button class="btn ghost" data-act="save-folder">📁 Lưu vào thư mục</button>
+      <button class="btn ghost" data-act="export-excel-results">📊 Xuất Excel kết quả</button>
       <button class="btn ghost" data-act="gen-ko">🔄 Tạo lại nhánh đấu</button>
     </div>
   </div>
@@ -1282,6 +1542,27 @@ function viewSettings(){
     <button class="btn primary" data-act="save-settings">Lưu cài đặt</button>
   </div>
 
+  <div class="card" style="max-width:640px;margin-bottom:16px">
+    <div class="card-head"><h3>📁 Lưu dữ liệu vào Thư mục Cục bộ</h3></div>
+    <p class="muted small" style="margin-bottom:14px">
+      Lưu tất cả nội dung, danh sách đội, lịch thi đấu và kết quả trực tiếp vào file <code>data.json</code> trong thư mục dự án này.
+    </p>
+    <div class="actions">
+      <button class="btn primary" data-act="save-folder">💾 Lưu trực tiếp vào file data.json</button>
+      <button class="btn ghost" data-act="load-folder">📂 Đọc dữ liệu từ file trong thư mục</button>
+    </div>
+  </div>
+
+  <div class="card" style="max-width:640px;margin-bottom:16px">
+    <div class="card-head"><h3>📊 Báo cáo & Xuất kết quả Excel</h3></div>
+    <p class="muted small" style="margin-bottom:14px">
+      Xuất toàn bộ bảng xếp hạng, thống kê đội bóng, kết quả các trận đấu và danh sách cầu thủ ra file Excel (.xlsx).
+    </p>
+    <div class="actions">
+      <button class="btn primary" data-act="export-excel-results">📊 Xuất file Excel kết quả bóng đá</button>
+    </div>
+  </div>
+
   <div class="card" style="max-width:640px">
     <div class="card-head"><h3>Dữ liệu</h3></div>
     <p class="muted small" style="margin-bottom:14px">Toàn bộ dữ liệu được lưu trong trình duyệt này. Hãy sao lưu định kỳ.</p>
@@ -1317,6 +1598,11 @@ document.addEventListener('click', e => {
     case 'tab':
       S.tab = el.dataset.tab; save(); render(); window.scrollTo({top:0,behavior:'smooth'});
       break;
+
+    /* Lưu & Xuất */
+    case 'save-folder': saveDataToFolder(); break;
+    case 'load-folder': loadDataFromFolder(); break;
+    case 'export-excel-results': exportExcelResults(); break;
 
     /* Đội bóng */
     case 'add-team': openTeamModal(null); break;
@@ -1447,6 +1733,7 @@ document.addEventListener('input', e => {
    ========================================================= */
 syncBracket();
 render();
+autoLoadFromFolderJson();
 </script>
 </body>
 </html>

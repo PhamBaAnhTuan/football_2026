@@ -1,0 +1,12 @@
+{
+  "name": "Giải bóng đá UDA 2026",
+  "teams": [],
+  "groups": [],
+  "matches": [],
+  "settings": {
+    "pointsWin": 3,
+    "pointsDraw": 1,
+    "qualifiers": 2
+  },
+  "tab": "teams"
+}
