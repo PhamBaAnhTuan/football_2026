@@ -1,0 +1,1452 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Quản lý giải bóng đá</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<style>
+:root{
+  --brand:#0ea47a; --brand-dark:#0a7d5d; --brand-soft:#e7f6f1;
+  --ink:#0f172a; --muted:#64748b; --line:#e6ebf1; --bg:#f5f7f9; --card:#fff;
+  --amber:#f59e0b; --red:#ef4444; --blue:#3b82f6;
+  --radius:14px;
+  --shadow:0 1px 2px rgba(15,23,42,.04), 0 8px 24px rgba(15,23,42,.05);
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,'Helvetica Neue',sans-serif;
+  background:var(--bg);color:var(--ink);font-size:14px;line-height:1.55;
+  -webkit-font-smoothing:antialiased;
+}
+h1,h2,h3,h4{margin:0;font-weight:700;letter-spacing:-.01em}
+h1{font-size:20px}
+h3{font-size:15px}
+p{margin:0}
+.muted{color:var(--muted)}
+.small{font-size:12.5px}
+.mt{margin-top:10px}
+.spacer{flex:1}
+
+/* ---------- Layout ---------- */
+header{
+  background:#fff;border-bottom:1px solid var(--line);position:sticky;top:0;z-index:30;
+}
+.hwrap{max-width:1200px;margin:0 auto;padding:12px 20px;display:flex;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{display:flex;align-items:center;gap:10px;font-weight:800;font-size:15px}
+.logo .ball{
+  width:32px;height:32px;border-radius:10px;background:linear-gradient(135deg,var(--brand),#0b8f6b);
+  display:grid;place-items:center;color:#fff;font-size:17px;box-shadow:0 4px 12px rgba(14,164,122,.3)
+}
+.tabs{display:flex;gap:4px;background:var(--bg);padding:4px;border-radius:12px;border:1px solid var(--line);margin-left:auto;flex-wrap:wrap}
+.tab{
+  padding:7px 14px;border-radius:9px;font-weight:600;color:var(--muted);cursor:pointer;
+  border:none;background:transparent;font-size:13.5px;font-family:inherit;transition:.15s;white-space:nowrap
+}
+.tab:hover{color:var(--ink)}
+.tab.active{background:#fff;color:var(--brand-dark);box-shadow:0 1px 3px rgba(15,23,42,.08)}
+main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
+
+.page-head{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:18px}
+.page-head p{margin-top:3px}
+.actions{display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;gap:6px;padding:9px 15px;border-radius:10px;border:1px solid transparent;
+  font-weight:600;font-size:13.5px;cursor:pointer;font-family:inherit;transition:.15s;white-space:nowrap;
+  background:#fff;color:var(--ink)
+}
+.btn.primary{background:var(--brand);color:#fff;box-shadow:0 3px 10px rgba(14,164,122,.28)}
+.btn.primary:hover{background:var(--brand-dark)}
+.btn.ghost{border-color:var(--line);background:#fff;color:#334155}
+.btn.ghost:hover{border-color:#cbd5e1;background:#f8fafc}
+.btn.danger{background:#fef2f2;color:#b91c1c;border-color:#fecaca}
+.btn.danger:hover{background:#fee2e2}
+.btn.sm{padding:6px 11px;font-size:12.5px;border-radius:8px}
+.icon-btn{
+  width:30px;height:30px;border-radius:8px;border:1px solid transparent;background:transparent;
+  cursor:pointer;display:grid;place-items:center;font-size:14px;color:var(--muted);transition:.15s
+}
+.icon-btn:hover{background:#f1f5f9;color:var(--ink)}
+
+/* ---------- Inputs ---------- */
+.input,select.input,textarea.input{
+  width:100%;padding:9px 12px;border:1px solid var(--line);border-radius:10px;font-family:inherit;
+  font-size:13.5px;background:#fff;color:var(--ink);outline:none;transition:.15s
+}
+.input:focus{border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,164,122,.13)}
+.search{max-width:340px}
+.field{display:flex;flex-direction:column;gap:6px;margin-bottom:14px}
+.field>span{font-weight:600;font-size:12.5px;color:#475569}
+.field>span em{font-style:normal;font-weight:500;color:var(--muted)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+@media(max-width:600px){.grid2,.grid3{grid-template-columns:1fr}}
+
+/* ---------- Cards ---------- */
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--radius);padding:16px;box-shadow:var(--shadow)}
+.card-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:12px}
+.cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.row-actions{display:flex;gap:2px;align-items:center}
+
+.team-top{display:flex;align-items:center;gap:11px}
+.avatar{
+  width:42px;height:42px;border-radius:12px;background:var(--brand-soft);color:var(--brand-dark);
+  display:grid;place-items:center;font-weight:800;font-size:15px;flex:0 0 auto
+}
+.team-info{flex:1;min-width:0}
+.team-info h3{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.chip{
+  display:inline-flex;align-items:center;gap:5px;background:#f1f5f9;border-radius:8px;padding:4px 9px;
+  font-size:12.5px;font-weight:500;color:#334155
+}
+.chip.cap{background:var(--brand-soft);color:var(--brand-dark);font-weight:600}
+.chip.cap em{font-style:normal;font-size:10.5px;opacity:.7;font-weight:700}
+.chip-x{border:none;background:transparent;cursor:pointer;color:var(--muted);font-size:11px;padding:0 0 0 2px;line-height:1}
+.chip-x:hover{color:var(--red)}
+
+/* ---------- Tables ---------- */
+.table{width:100%;border-collapse:collapse;font-size:13px}
+.table th{
+  text-align:left;font-weight:600;color:var(--muted);font-size:11.5px;text-transform:uppercase;
+  letter-spacing:.04em;padding:7px 6px;border-bottom:1px solid var(--line)
+}
+.table td{padding:8px 6px;border-bottom:1px solid #f1f5f9}
+.table tbody tr:last-child td{border-bottom:none}
+.table .tname{font-weight:600}
+.standings td:not(.tname),.standings th:not(:nth-child(2)){text-align:center;width:34px}
+.standings tr.qualify td{background:rgba(14,164,122,.055)}
+.standings tr.qualify td:first-child{box-shadow:inset 3px 0 0 var(--brand)}
+
+/* ---------- Toolbar / badges ---------- */
+.toolbar{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:16px;align-items:center}
+.badge{
+  display:inline-block;padding:2.5px 8px;border-radius:7px;font-size:11.5px;font-weight:700;
+  background:var(--brand-soft);color:var(--brand-dark)
+}
+.badge.soft{background:#f1f5f9;color:#475569}
+.badge.gray{background:#f1f5f9;color:#64748b}
+.badge.live{background:#fef3c7;color:#92400e}
+.badge.done{background:#dcfce7;color:#166534}
+
+/* ---------- Match rows ---------- */
+.match{
+  background:#fff;border:1px solid var(--line);border-radius:12px;padding:12px 16px;cursor:pointer;
+  transition:.15s;margin-bottom:9px
+}
+.match:hover{border-color:#cbd5e1;box-shadow:0 4px 14px rgba(15,23,42,.06)}
+.m-top{display:flex;align-items:center;gap:7px;flex-wrap:wrap;margin-bottom:8px}
+.m-top .spacer{flex:1}
+.m-mid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center}
+.m-team{font-weight:600;font-size:14px}
+.m-team.home{text-align:right}
+.m-team.away{text-align:left}
+.m-team.win{color:var(--brand-dark)}
+.m-team.win::after{content:' ▸';font-size:10px;opacity:.55}
+.m-team.home.win::after{content:''}
+.m-team.home.win::before{content:'◂ ';font-size:10px;opacity:.55}
+.m-score{
+  font-weight:800;font-size:16px;font-variant-numeric:tabular-nums;background:#f8fafc;border-radius:9px;
+  padding:4px 14px;min-width:74px;text-align:center;color:#334155;letter-spacing:.02em
+}
+.m-score.done{background:var(--brand-soft);color:var(--brand-dark)}
+.day-group{margin-bottom:22px}
+.day-head{
+  display:flex;align-items:center;gap:9px;margin-bottom:10px;font-weight:700;font-size:13px;color:#334155
+}
+.day-head .line{flex:1;height:1px;background:var(--line)}
+.cards-line{display:flex;gap:10px;font-size:11.5px;color:var(--muted);margin-top:6px;justify-content:center}
+
+/* ---------- Bracket ---------- */
+.bracket{display:flex;gap:22px;overflow-x:auto;padding:6px 2px 20px;align-items:stretch}
+.bracket-col{display:flex;flex-direction:column;justify-content:space-around;gap:12px;min-width:236px;flex:0 0 auto}
+.bracket-col h4{
+  font-size:12px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:center;
+  padding-bottom:6px;border-bottom:2px solid var(--brand-soft);margin-bottom:4px
+}
+.bmatch{
+  background:#fff;border:1px solid var(--line);border-radius:11px;overflow:hidden;cursor:pointer;transition:.15s;
+  box-shadow:0 1px 2px rgba(15,23,42,.04)
+}
+.bmatch:hover{border-color:var(--brand);box-shadow:0 6px 18px rgba(14,164,122,.15)}
+.bmatch.third{border-style:dashed}
+.brow{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;gap:8px;font-size:13px}
+.brow+.brow{border-top:1px solid #f1f5f9}
+.brow .bname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.brow .bname i{font-style:normal;color:#cbd5e1;font-weight:500;font-size:12.5px}
+.brow .bscore{font-weight:800;font-variant-numeric:tabular-nums;color:#64748b;font-size:13.5px}
+.brow .bscore em{font-style:normal;font-size:11px;color:var(--muted);margin-left:3px;font-weight:600}
+.brow.win{background:rgba(14,164,122,.07)}
+.brow.win .bname{color:var(--brand-dark)}
+.brow.win .bscore{color:var(--brand-dark)}
+.bmeta{
+  padding:5px 12px;background:#f8fafc;border-top:1px solid #f1f5f9;font-size:11px;color:var(--muted);
+  display:flex;gap:8px;justify-content:space-between
+}
+
+/* ---------- Empty ---------- */
+.empty{
+  text-align:center;padding:56px 20px;background:#fff;border:1px dashed var(--line);border-radius:var(--radius)
+}
+.empty .ico{font-size:38px;margin-bottom:12px}
+.empty h3{margin-bottom:6px}
+.empty p{color:var(--muted);margin-bottom:18px;max-width:420px;margin-left:auto;margin-right:auto}
+
+/* ---------- Modal ---------- */
+.modal-overlay{
+  position:fixed;inset:0;background:rgba(15,23,42,.42);backdrop-filter:blur(2px);z-index:100;
+  display:flex;align-items:flex-start;justify-content:center;padding:32px 16px;overflow-y:auto;
+  animation:fade .16s ease
+}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{
+  background:#fff;border-radius:16px;width:100%;max-width:560px;box-shadow:0 24px 60px rgba(15,23,42,.25);
+  animation:pop .18s ease
+}
+@keyframes pop{from{transform:translateY(10px);opacity:0}to{transform:none;opacity:1}}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:16px 20px;border-bottom:1px solid var(--line)}
+.modal-body{padding:20px;max-height:calc(100vh - 220px);overflow-y:auto}
+.modal-foot{display:flex;justify-content:flex-end;gap:9px;padding:14px 20px;border-top:1px solid var(--line);background:#fbfcfd;border-radius:0 0 16px 16px}
+
+.member-row{display:flex;gap:8px;margin-bottom:8px;align-items:center}
+.member-row .input{flex:1}
+
+.score-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:14px;align-items:center;margin-bottom:6px}
+.score-team{font-weight:700;text-align:center;font-size:14px}
+.score-input{
+  width:100%;text-align:center;font-size:26px;font-weight:800;padding:8px;border-radius:12px;
+  border:1px solid var(--line);font-family:inherit;outline:none;background:#f8fafc;color:var(--ink)
+}
+.score-input:focus{border-color:var(--brand);background:#fff;box-shadow:0 0 0 3px rgba(14,164,122,.13)}
+.score-sep{font-weight:800;color:#cbd5e1;font-size:20px}
+.subhead{
+  font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+  margin:20px 0 10px;padding-bottom:6px;border-bottom:1px solid var(--line)
+}
+
+/* ---------- Toast ---------- */
+.toast{
+  position:fixed;bottom:24px;left:50%;transform:translate(-50%,20px);background:#0f172a;color:#fff;
+  padding:11px 20px;border-radius:11px;font-size:13.5px;font-weight:600;opacity:0;transition:.25s;z-index:200;
+  box-shadow:0 10px 30px rgba(15,23,42,.3)
+}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.ok{background:var(--brand-dark)}
+.toast.err{background:#b91c1c}
+
+::-webkit-scrollbar{height:9px;width:9px}
+::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
+::-webkit-scrollbar-thumb:hover{background:#94a3b8}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hwrap">
+    <div class="logo"><div class="ball">⚽</div><span id="brandName">Giải bóng đá</span></div>
+    <nav class="tabs" id="tabs">
+      <button class="tab" data-act="tab" data-tab="teams">Đội bóng</button>
+      <button class="tab" data-act="tab" data-tab="groups">Vòng bảng</button>
+      <button class="tab" data-act="tab" data-tab="schedule">Lịch thi đấu</button>
+      <button class="tab" data-act="tab" data-tab="bracket">Nhánh đấu</button>
+      <button class="tab" data-act="tab" data-tab="settings">Cài đặt</button>
+    </nav>
+  </div>
+</header>
+
+<main id="view"></main>
+
+<script>
+/* =========================================================
+   STATE
+   ========================================================= */
+const LS_KEY = 'fagleague_v1';
+const uid = () => Math.random().toString(36).slice(2, 10);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').trim();
+
+function defaultState(){
+  return {
+    name: 'Giải bóng đá phong trào',
+    teams: [], groups: [], matches: [],
+    settings: { pointsWin: 3, pointsDraw: 1, qualifiers: 2 },
+    tab: 'teams'
+  };
+}
+function load(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){
+      const p = JSON.parse(raw);
+      const d = defaultState();
+      return { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
+    }
+  }catch(e){}
+  return defaultState();
+}
+let S = load();
+const save = () => localStorage.setItem(LS_KEY, JSON.stringify(S));
+
+let searchQ = '';
+let fStage = 'all', fGroup = 'all', fStatus = 'all';
+
+/* =========================================================
+   HELPERS
+   ========================================================= */
+const teamName = id => { const t = S.teams.find(x => x.id === id); return t ? t.name : '—'; };
+const groupName = id => { const g = S.groups.find(x => x.id === id); return g ? g.name : '—'; };
+const initials = n => (n||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase();
+
+function fmtDate(s){
+  if(!s) return 'Chưa xếp';
+  const [y,m,d] = s.split('-');
+  return `${d}/${m}/${y}`;
+}
+function dayLabel(s){
+  if(!s) return 'Chưa xếp ngày';
+  const d = new Date(s + 'T00:00:00');
+  const wd = ['Chủ nhật','Thứ 2','Thứ 3','Thứ 4','Thứ 5','Thứ 6','Thứ 7'][d.getDay()];
+  return `${wd}, ${fmtDate(s)}`;
+}
+function todayISO(){
+  const d = new Date();
+  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function addDays(dateStr, days){
+  const d = new Date((dateStr||todayISO()) + 'T00:00:00');
+  d.setDate(d.getDate() + days);
+  return new Date(d.getTime() - d.getTimezoneOffset()*60000).toISOString().slice(0,10);
+}
+function addMinutes(t, mins){
+  const [h,m] = String(t||'08:00').split(':').map(Number);
+  const total = h*60 + m + mins;
+  return String(Math.floor(total/60)%24).padStart(2,'0') + ':' + String(total%60).padStart(2,'0');
+}
+function toast(msg, type){
+  const d = document.createElement('div');
+  d.className = 'toast ' + (type||'');
+  d.textContent = msg;
+  document.body.appendChild(d);
+  requestAnimationFrame(()=>d.classList.add('show'));
+  setTimeout(()=>{ d.classList.remove('show'); setTimeout(()=>d.remove(), 300); }, 2600);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+function openModal({ title, body, footer, width }){
+  const ov = document.createElement('div');
+  ov.className = 'modal-overlay';
+  ov.innerHTML = `<div class="modal" style="max-width:${width||560}px">
+    <div class="modal-head"><h3>${esc(title)}</h3><button class="icon-btn" data-close>✕</button></div>
+    <div class="modal-body">${body}</div>
+    ${footer !== null ? `<div class="modal-foot">${footer || ''}</div>` : ''}
+  </div>`;
+  document.body.appendChild(ov);
+  ov.addEventListener('mousedown', e => { if(e.target === ov) ov.remove(); });
+  ov.querySelectorAll('[data-close]').forEach(b => b.addEventListener('click', ()=>ov.remove()));
+  return ov;
+}
+document.addEventListener('keydown', e => {
+  if(e.key === 'Escape'){
+    const m = document.querySelector('.modal-overlay:last-child');
+    if(m) m.remove();
+  }
+});
+
+/* =========================================================
+   TEAM LOGIC
+   ========================================================= */
+function openTeamModal(teamId){
+  const editing = !!teamId;
+  const t = editing ? S.teams.find(x=>x.id===teamId) : { id: uid(), name:'', captain:'', phone:'', members: [] };
+  let members = (t.members || []).slice();
+
+  const ov = openModal({
+    title: editing ? 'Sửa đội bóng' : 'Thêm đội bóng',
+    body: `
+      <div class="grid2">
+        <label class="field"><span>Tên đội bóng *</span>
+          <input class="input" id="f-name" value="${esc(t.name)}" placeholder="VD: FC Sao Đêm"></label>
+        <label class="field"><span>Đội trưởng *</span>
+          <input class="input" id="f-captain" value="${esc(t.captain)}" placeholder="Nguyễn Văn A"></label>
+      </div>
+      <label class="field"><span>Số điện thoại</span>
+        <input class="input" id="f-phone" value="${esc(t.phone)}" placeholder="09xx xxx xxx"></label>
+      <div class="field">
+        <span>Thành viên <em>(tối đa 6 người, chưa tính đội trưởng — tổng cộng 7)</em></span>
+        <div id="memberList"></div>
+        <button class="btn ghost sm" id="addMember" type="button" style="align-self:flex-start">+ Thêm thành viên</button>
+      </div>`,
+    footer: `<button class="btn ghost" data-close>Hủy</button>
+             <button class="btn primary" id="saveTeam">${editing?'Lưu thay đổi':'Thêm đội'}</button>`
+  });
+
+  const list = ov.querySelector('#memberList');
+  const renderMembers = () => {
+    list.innerHTML = members.map((m,i)=>`
+      <div class="member-row">
+        <input class="input" data-mi="${i}" value="${esc(m)}" placeholder="Tên thành viên ${i+1}">
+        <button class="icon-btn" type="button" data-mdel="${i}">✕</button>
+      </div>`).join('') || `<div class="muted small" style="padding:4px 0 8px">Chưa có thành viên nào</div>`;
+    ov.querySelector('#addMember').style.display = members.length >= 6 ? 'none' : '';
+  };
+  renderMembers();
+
+  list.addEventListener('input', e => {
+    const i = e.target.dataset.mi;
+    if(i !== undefined) members[+i] = e.target.value;
+  });
+  list.addEventListener('click', e => {
+    const i = e.target.dataset.mdel;
+    if(i !== undefined){ members.splice(+i,1); renderMembers(); }
+  });
+  ov.querySelector('#addMember').addEventListener('click', () => {
+    if(members.length >= 6) return;
+    members.push(''); renderMembers();
+    const inputs = list.querySelectorAll('input');
+    inputs[inputs.length-1]?.focus();
+  });
+
+  ov.querySelector('#saveTeam').addEventListener('click', () => {
+    const name = ov.querySelector('#f-name').value.trim();
+    const captain = ov.querySelector('#f-captain').value.trim();
+    const phone = ov.querySelector('#f-phone').value.trim();
+    if(!name) return toast('Vui lòng nhập tên đội bóng', 'err');
+    if(!captain) return toast('Vui lòng nhập tên đội trưởng', 'err');
+    const dup = S.teams.find(x => x.id !== t.id && norm(x.name) === norm(name));
+    if(dup) return toast('Tên đội bóng đã tồn tại', 'err');
+
+    const clean = members.map(m=>m.trim()).filter(Boolean).slice(0,6);
+    if(editing){
+      Object.assign(t, { name, captain, phone, members: clean });
+    }else{
+      S.teams.push({ id: t.id, name, captain, phone, members: clean });
+    }
+    save(); render(); ov.remove();
+    toast(editing ? 'Đã cập nhật đội bóng' : 'Đã thêm đội bóng', 'ok');
+  });
+}
+
+function deleteTeam(id){
+  const t = S.teams.find(x=>x.id===id);
+  if(!t) return;
+  const used = S.matches.some(m => m.homeId===id || m.awayId===id);
+  const msg = used
+    ? `Đội "${t.name}" đang có trận đấu. Xóa sẽ gỡ đội khỏi bảng đấu và xóa các trận liên quan. Tiếp tục?`
+    : `Xóa đội "${t.name}"?`;
+  if(!confirm(msg)) return;
+  S.teams = S.teams.filter(x=>x.id!==id);
+  S.groups.forEach(g => g.teamIds = g.teamIds.filter(x=>x!==id));
+  S.matches = S.matches.filter(m => m.homeId!==id && m.awayId!==id);
+  save(); render(); toast('Đã xóa đội bóng', 'ok');
+}
+
+/* =========================================================
+   EXCEL
+   ========================================================= */
+function downloadTemplate(){
+  const header = ['Tên đội bóng','Đội trưởng','SĐT','Thành viên 1','Thành viên 2','Thành viên 3','Thành viên 4','Thành viên 5','Thành viên 6'];
+  const rows = [
+    header,
+    ['FC Sao Đêm','Nguyễn Văn A','0901234567','Trần Văn B','Lê Văn C','Phạm Văn D','','',''],
+    ['FC Bình Minh','Trần Thị E','0912345678','Hoàng Văn F','Vũ Văn G','','','','']
+  ];
+  const ws = XLSX.utils.aoa_to_sheet(rows);
+  ws['!cols'] = header.map(()=>({wch:20}));
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, 'Danh sach doi');
+  XLSX.writeFile(wb, 'mau-danh-sach-doi-bong.xlsx');
+  toast('Đã tải file mẫu', 'ok');
+}
+
+function importExcel(file){
+  if(typeof XLSX === 'undefined'){
+    return toast('Thư viện Excel chưa tải được. Kiểm tra kết nối mạng rồi thử lại.', 'err');
+  }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try{
+      const wb = XLSX.read(new Uint8Array(e.target.result), { type: 'array' });
+      const ws = wb.Sheets[wb.SheetNames[0]];
+      const rows = XLSX.utils.sheet_to_json(ws, { header: 1, defval: '' });
+      if(!rows.length) return toast('File không có dữ liệu', 'err');
+
+      // detect header
+      const first = rows[0].map(c => norm(c));
+      const hasHeader = first.some(c => c.includes('ten doi') || c.includes('team') || c.includes('doi bong'));
+      const headerRow = hasHeader ? first : null;
+      const dataRows = hasHeader ? rows.slice(1) : rows;
+
+      let idx = { name: 0, captain: 1, phone: 2, members: [] };
+      if(hasHeader){
+        idx = { name: -1, captain: -1, phone: -1, members: [] };
+        headerRow.forEach((h, i) => {
+          if(idx.name < 0 && (h.includes('ten doi') || h.includes('doi bong') || h === 'team' || h === 'doi')) idx.name = i;
+          else if(idx.captain < 0 && (h.includes('doi truong') || h.includes('captain') || h.includes('truong'))) idx.captain = i;
+          else if(idx.phone < 0 && (h.includes('sdt') || h.includes('phone') || h.includes('dien thoai') || h.includes('so dt'))) idx.phone = i;
+          else if(h.includes('thanh vien') || h.includes('cau thu') || h.includes('member') || h.includes('player') || /^tv\s*\d*$/.test(h)) idx.members.push(i);
+        });
+        if(idx.name < 0) idx.name = 0;
+        if(idx.captain < 0) idx.captain = 1;
+        if(idx.phone < 0) idx.phone = 2;
+        if(!idx.members.length) idx.members = headerRow.map((_,i)=>i).filter(i => i !== idx.name && i !== idx.captain && i !== idx.phone);
+      }else{
+        idx.members = [];
+        for(let i=3;i<Math.max(...dataRows.map(r=>r.length));i++) idx.members.push(i);
+      }
+
+      const parsed = [];
+      dataRows.forEach(r => {
+        const name = String(r[idx.name] ?? '').trim();
+        if(!name) return;
+        const captain = String(r[idx.captain] ?? '').trim();
+        const phone = String(r[idx.phone] ?? '').trim();
+        const members = [];
+        idx.members.forEach(i => {
+          String(r[i] ?? '').split(/[,;\/|]/).forEach(p => {
+            const v = p.trim();
+            if(v && members.length < 6) members.push(v);
+          });
+        });
+        parsed.push({ name, captain, phone, members });
+      });
+
+      if(!parsed.length) return toast('Không đọc được đội bóng nào', 'err');
+
+      const existing = new Set(S.teams.map(t => norm(t.name)));
+      const fresh = parsed.filter(p => !existing.has(norm(p.name)));
+      const skipped = parsed.length - fresh.length;
+
+      const ov = openModal({
+        title: `Xem trước nhập Excel (${fresh.length} đội)`,
+        width: 660,
+        body: `
+          ${skipped ? `<div class="badge gray" style="margin-bottom:12px">Bỏ qua ${skipped} đội trùng tên</div>` : ''}
+          <table class="table">
+            <thead><tr><th>Đội bóng</th><th>Đội trưởng</th><th>SĐT</th><th>Thành viên</th></tr></thead>
+            <tbody>${fresh.map(p=>`<tr>
+              <td class="tname">${esc(p.name)}</td>
+              <td>${esc(p.captain||'—')}</td>
+              <td>${esc(p.phone||'—')}</td>
+              <td class="muted small">${esc(p.members.join(', ')||'—')}</td>
+            </tr>`).join('')}</tbody>
+          </table>`,
+        footer: `<button class="btn ghost" data-close>Hủy</button>
+                 <button class="btn primary" id="doImport" ${fresh.length?'':'disabled'}>Nhập ${fresh.length} đội</button>`
+      });
+
+      ov.querySelector('#doImport').addEventListener('click', () => {
+        fresh.forEach(p => S.teams.push({ id: uid(), ...p }));
+        save(); render(); ov.remove();
+        toast(`Đã nhập ${fresh.length} đội bóng`, 'ok');
+      });
+    }catch(err){
+      console.error(err);
+      toast('Lỗi đọc file. Kiểm tra định dạng file.', 'err');
+    }
+  };
+  reader.readAsArrayBuffer(file);
+}
+
+/* =========================================================
+   GROUPS
+   ========================================================= */
+function autoGroups(){
+  if(S.teams.length < 2) return toast('Cần ít nhất 2 đội bóng', 'err');
+  const ov = openModal({
+    title: 'Chia bảng tự động',
+    body: `
+      <label class="field"><span>Số bảng</span>
+        <input class="input" type="number" id="g-count" min="1" max="8" value="${S.groups.length || 2}"></label>
+      <label class="field"><span>Cách chia</span>
+        <select class="input" id="g-mode">
+          <option value="order">Theo thứ tự danh sách đội</option>
+          <option value="random">Ngẫu nhiên</option>
+        </select></label>
+      <p class="muted small">Đội được chia theo kiểu "rắn cuốn" để các bảng cân bằng nhất có thể.</p>`,
+    footer: `<button class="btn ghost" data-close>Hủy</button><button class="btn primary" id="doAuto">Chia bảng</button>`
+  });
+  ov.querySelector('#doAuto').addEventListener('click', () => {
+    const n = Math.max(1, Math.min(8, +ov.querySelector('#g-count').value || 2));
+    const mode = ov.querySelector('#g-mode').value;
+    let teams = S.teams.slice();
+    if(mode === 'random') teams.sort(()=>Math.random()-0.5);
+
+    const letters = 'ABCDEFGH';
+    S.groups = Array.from({length:n}, (_,i)=>({ id: uid(), name: 'Bảng ' + letters[i], teamIds: [] }));
+    teams.forEach((t, i) => {
+      const round = Math.floor(i / n);
+      const pos = round % 2 === 0 ? i % n : n - 1 - (i % n);
+      S.groups[pos].teamIds.push(t.id);
+    });
+    // xóa lịch vòng bảng cũ
+    S.matches = S.matches.filter(m => m.stage !== 'group');
+    save(); render(); ov.remove();
+    toast('Đã chia bảng', 'ok');
+  });
+}
+
+function computeStandings(groupId){
+  const g = S.groups.find(x=>x.id===groupId);
+  if(!g) return [];
+  const map = {};
+  g.teamIds.forEach(id => map[id] = { id, p:0,w:0,d:0,l:0,gf:0,ga:0,gd:0,pts:0,y:0,r:0 });
+  S.matches
+    .filter(m => m.stage==='group' && m.groupId===groupId && m.hs!=null && m.as!=null)
+    .forEach(m => {
+      const h = map[m.homeId], a = map[m.awayId];
+      if(!h || !a) return;
+      h.p++; a.p++;
+      h.gf += m.hs; h.ga += m.as;
+      a.gf += m.as; a.ga += m.hs;
+      if(m.hs > m.as){ h.w++; a.l++; h.pts += S.settings.pointsWin; }
+      else if(m.hs < m.as){ a.w++; h.l++; a.pts += S.settings.pointsWin; }
+      else { h.d++; a.d++; h.pts += S.settings.pointsDraw; a.pts += S.settings.pointsDraw; }
+      h.y += m.hy||0; a.y += m.ay||0; h.r += m.hr||0; a.r += m.ar||0;
+    });
+  return Object.values(map).map(r => ({ ...r, gd: r.gf - r.ga }))
+    .sort((a,b) => b.pts - a.pts || b.gd - a.gd || b.gf - a.gf || teamName(a.id).localeCompare(teamName(b.id)));
+}
+
+function roundRobin(ids){
+  const arr = ids.slice();
+  if(arr.length % 2) arr.push(null);
+  const n = arr.length;
+  const rounds = [];
+  for(let r=0; r<n-1; r++){
+    const pairs = [];
+    for(let i=0; i<n/2; i++){
+      const a = arr[i], b = arr[n-1-i];
+      if(a && b) pairs.push(r % 2 === 0 ? [a,b] : [b,a]);
+    }
+    rounds.push(pairs);
+    arr.splice(1, 0, arr.pop());
+  }
+  return rounds;
+}
+
+function openGroupScheduleModal(){
+  const valid = S.groups.filter(g => g.teamIds.length >= 2);
+  if(!valid.length) return toast('Cần ít nhất 1 bảng có từ 2 đội trở lên', 'err');
+  const ov = openModal({
+    title: 'Tạo lịch thi đấu vòng bảng',
+    width: 620,
+    body: `
+      <div class="grid2">
+        <label class="field"><span>Ngày bắt đầu</span><input class="input" type="date" id="s-date" value="${todayISO()}"></label>
+        <label class="field"><span>Giờ bắt đầu</span><input class="input" type="time" id="s-time" value="18:00"></label>
+      </div>
+      <div class="grid3">
+        <label class="field"><span>Thời lượng trận (phút)</span><input class="input" type="number" id="s-dur" value="30" min="10"></label>
+        <label class="field"><span>Nghỉ giữa trận (phút)</span><input class="input" type="number" id="s-break" value="10" min="0"></label>
+        <label class="field"><span>Số sân</span><input class="input" type="number" id="s-pitch" value="1" min="1" max="6"></label>
+      </div>
+      <div class="grid2">
+        <label class="field"><span>Số ngày giữa các vòng</span><input class="input" type="number" id="s-gap" value="3" min="1"></label>
+        <label class="field"><span>Thể thức</span>
+          <select class="input" id="s-double">
+            <option value="0">Đá 1 lượt</option>
+            <option value="1">Đá 2 lượt (lượt đi - lượt về)</option>
+          </select></label>
+      </div>
+      <p class="muted small">Lịch cũ của vòng bảng sẽ được thay thế. Bạn có thể sửa ngày/giờ/sân từng trận sau.</p>`,
+    footer: `<button class="btn ghost" data-close>Hủy</button><button class="btn primary" id="doGen">Tạo lịch</button>`
+  });
+
+  ov.querySelector('#doGen').addEventListener('click', () => {
+    const start = ov.querySelector('#s-date').value || todayISO();
+    const time0 = ov.querySelector('#s-time').value || '18:00';
+    const dur = +ov.querySelector('#s-dur').value || 30;
+    const brk = +ov.querySelector('#s-break').value || 0;
+    const pitches = Math.max(1, +ov.querySelector('#s-pitch').value || 1);
+    const gap = Math.max(1, +ov.querySelector('#s-gap').value || 3);
+    const dbl = ov.querySelector('#s-double').value === '1';
+
+    const newMatches = [];
+    S.groups.forEach(g => {
+      if(g.teamIds.length < 2) return;
+      let rounds = roundRobin(g.teamIds);
+      if(dbl) rounds = rounds.concat(rounds.map(rd => rd.map(([a,b]) => [b,a])));
+      rounds.forEach((pairs, ri) => {
+        const date = addDays(start, ri * gap);
+        pairs.forEach(([h,a], i) => {
+          const pitchIdx = i % pitches;
+          const slotIdx = Math.floor(i / pitches);
+          newMatches.push({
+            id: uid(), stage: 'group', groupId: g.id,
+            round: ri+1, roundName: 'Vòng ' + (ri+1),
+            homeId: h, awayId: a,
+            date, time: addMinutes(time0, slotIdx * (dur + brk)), pitch: 'Sân ' + (pitchIdx+1),
+            hs: null, as: null, hy: 0, ay: 0, hr: 0, ar: 0,
+            mvp: '', referee: '', note: ''
+          });
+        });
+      });
+    });
+
+    S.matches = S.matches.filter(m => m.stage !== 'group').concat(newMatches);
+    save(); render(); ov.remove();
+    toast(`Đã tạo ${newMatches.length} trận vòng bảng`, 'ok');
+  });
+}
+
+/* =========================================================
+   KNOCKOUT
+   ========================================================= */
+function seedOrder(n){
+  let arr = [1];
+  while(arr.length < n){
+    const m = arr.length * 2;
+    const next = [];
+    arr.forEach(s => { next.push(s); next.push(m + 1 - s); });
+    arr = next;
+  }
+  return arr;
+}
+
+function winnerOf(m){
+  if(!m || m.hs == null || m.as == null || !m.homeId || !m.awayId) return null;
+  if(m.hs > m.as) return m.homeId;
+  if(m.as > m.hs) return m.awayId;
+  if(m.hp != null && m.ap != null && m.hp !== m.ap) return m.hp > m.ap ? m.homeId : m.awayId;
+  return null;
+}
+function loserOf(m){
+  if(!m || m.hs == null || m.as == null || !m.homeId || !m.awayId) return null;
+  if(m.hs > m.as) return m.awayId;
+  if(m.as > m.hs) return m.homeId;
+  if(m.hp != null && m.ap != null && m.hp !== m.ap) return m.hp > m.ap ? m.awayId : m.homeId;
+  return null;
+}
+
+function getSeeds(){
+  const per = S.settings.qualifiers;
+  const out = [];
+  for(let r=0; r<per; r++){
+    S.groups.forEach(g => {
+      const st = computeStandings(g.id);
+      if(st[r]) out.push(st[r].id);
+    });
+  }
+  return out;
+}
+
+function groupStageComplete(){
+  const gm = S.matches.filter(m => m.stage === 'group');
+  return gm.length > 0 && gm.every(m => m.hs != null && m.as != null);
+}
+
+function generateKnockout(){
+  const seeds = getSeeds();
+  const n = seeds.length;
+  if(n < 2) return toast('Chưa đủ đội đi tiếp', 'err');
+  if((n & (n-1)) !== 0) return toast(`Số đội đi tiếp hiện tại là ${n}. Cần là 4, 8 hoặc 16 — hãy chỉnh "Số đội đi tiếp mỗi bảng" trong Cài đặt.`, 'err');
+  if(!groupStageComplete()){
+    if(!confirm('Vòng bảng chưa hoàn tất. Vẫn tạo nhánh đấu theo thứ tự hiện tại?')) return;
+  }
+
+  S.matches = S.matches.filter(m => m.stage !== 'ko');
+
+  const names = [];
+  const label = { 16: 'Vòng 1/8', 8: 'Tứ kết', 4: 'Bán kết', 2: 'Chung kết' };
+  let sz = n;
+  while(sz >= 2){ names.push(label[sz] || ('Vòng ' + sz)); sz /= 2; }
+
+  const rounds = [];
+  for(let r=0; r<names.length; r++){
+    const cnt = n / Math.pow(2, r+1);
+    const arr = [];
+    for(let i=0; i<cnt; i++){
+      arr.push({
+        id: uid(), stage: 'ko', round: r, roundName: names[r], slot: i,
+        homeId: null, awayId: null, hs: null, as: null, hp: null, ap: null,
+        hy: 0, ay: 0, hr: 0, ar: 0, date: '', time: '', pitch: '',
+        mvp: '', referee: '', note: ''
+      });
+    }
+    rounds.push(arr);
+  }
+
+  const order = seedOrder(n);
+  for(let i=0; i<n/2; i++){
+    rounds[0][i].homeId = seeds[order[2*i] - 1];
+    rounds[0][i].awayId = seeds[order[2*i+1] - 1];
+  }
+
+  for(let r=0; r<names.length-1; r++){
+    rounds[r].forEach((m, i) => {
+      m.nextId = rounds[r+1][Math.floor(i/2)].id;
+      m.nextSlot = i % 2;
+    });
+  }
+
+  // Tranh hạng 3
+  if(names.length >= 2){
+    const semiRound = rounds[names.length - 2];
+    const third = {
+      id: uid(), stage: 'ko', round: names.length - 1, roundName: 'Tranh hạng 3',
+      slot: 99, thirdPlace: true,
+      homeId: null, awayId: null, hs: null, as: null, hp: null, ap: null,
+      hy: 0, ay: 0, hr: 0, ar: 0, date: '', time: '', pitch: '', mvp: '', referee: '', note: ''
+    };
+    semiRound.forEach((m, i) => { m.loserNextId = third.id; m.loserSlot = i; });
+    rounds[rounds.length - 1].push(third);
+  }
+
+  rounds.flat().forEach(m => S.matches.push(m));
+  syncBracket();
+  save(); render();
+  toast('Đã tạo nhánh đấu loại trực tiếp', 'ok');
+}
+
+function syncBracket(){
+  const ko = S.matches.filter(m => m.stage === 'ko');
+  if(!ko.length) return;
+  ko.sort((a,b) => (a.round - b.round) || (a.slot - b.slot));
+
+  const before = {};
+  ko.forEach(m => before[m.id] = (m.homeId||'') + '|' + (m.awayId||''));
+
+  // xoá các suất được suy ra
+  ko.forEach(m => {
+    if(m.thirdPlace){ m.homeId = null; m.awayId = null; }
+    else if(m.round > 0){ m.homeId = null; m.awayId = null; }
+  });
+
+  // lan truyền
+  ko.forEach(m => {
+    const w = winnerOf(m), l = loserOf(m);
+    if(m.nextId){
+      const nx = S.matches.find(x => x.id === m.nextId);
+      if(nx) nx[m.nextSlot === 0 ? 'homeId' : 'awayId'] = w;
+    }
+    if(m.loserNextId){
+      const nx = S.matches.find(x => x.id === m.loserNextId);
+      if(nx) nx[m.loserSlot === 0 ? 'homeId' : 'awayId'] = l;
+    }
+  });
+
+  // nếu đội thay đổi → xoá tỉ số cũ của trận đó
+  ko.forEach(m => {
+    const now = (m.homeId||'') + '|' + (m.awayId||'');
+    if(before[m.id] !== now && m.round > 0){
+      m.hs = null; m.as = null; m.hp = null; m.ap = null;
+      m.hy = 0; m.ay = 0; m.hr = 0; m.ar = 0;
+    }
+    if(before[m.id] !== now && m.thirdPlace){
+      m.hs = null; m.as = null; m.hp = null; m.ap = null;
+    }
+  });
+}
+
+/* =========================================================
+   SCORE MODAL
+   ========================================================= */
+function openScoreModal(matchId){
+  const m = S.matches.find(x => x.id === matchId);
+  if(!m) return;
+  if(!m.homeId || !m.awayId) return toast('Chưa xác định được cặp đấu', 'err');
+
+  const isKO = m.stage === 'ko';
+  const home = teamName(m.homeId), away = teamName(m.awayId);
+
+  const ov = openModal({
+    title: `${home} vs ${away}`,
+    width: 620,
+    body: `
+      <div class="score-grid">
+        <div>
+          <div class="score-team">${esc(home)}</div>
+          <input class="score-input" type="number" min="0" id="sc-hs" value="${m.hs ?? ''}" placeholder="0">
+        </div>
+        <div class="score-sep">–</div>
+        <div>
+          <div class="score-team">${esc(away)}</div>
+          <input class="score-input" type="number" min="0" id="sc-as" value="${m.as ?? ''}" placeholder="0">
+        </div>
+      </div>
+
+      <div class="subhead">Thông tin trận đấu</div>
+      <div class="grid3">
+        <label class="field"><span>Ngày</span><input class="input" type="date" id="sc-date" value="${m.date||''}"></label>
+        <label class="field"><span>Giờ</span><input class="input" type="time" id="sc-time" value="${m.time||''}"></label>
+        <label class="field"><span>Sân</span><input class="input" id="sc-pitch" value="${esc(m.pitch||'')}" placeholder="Sân 1"></label>
+      </div>
+
+      <div class="subhead">Kỷ luật</div>
+      <div class="grid2">
+        <div>
+          <div class="muted small" style="font-weight:600;margin-bottom:6px">${esc(home)}</div>
+          <div class="grid2">
+            <label class="field"><span>🟨 Thẻ vàng</span><input class="input" type="number" min="0" id="sc-hy" value="${m.hy||0}"></label>
+            <label class="field"><span>🟥 Thẻ đỏ</span><input class="input" type="number" min="0" id="sc-hr" value="${m.hr||0}"></label>
+          </div>
+        </div>
+        <div>
+          <div class="muted small" style="font-weight:600;margin-bottom:6px">${esc(away)}</div>
+          <div class="grid2">
+            <label class="field"><span>🟨 Thẻ vàng</span><input class="input" type="number" min="0" id="sc-ay" value="${m.ay||0}"></label>
+            <label class="field"><span>🟥 Thẻ đỏ</span><input class="input" type="number" min="0" id="sc-ar" value="${m.ar||0}"></label>
+          </div>
+        </div>
+      </div>
+
+      ${isKO ? `
+      <div class="subhead">Luân lưu 11m <span style="text-transform:none;font-weight:500">(chỉ nhập khi hòa)</span></div>
+      <div class="grid2">
+        <label class="field"><span>${esc(home)}</span><input class="input" type="number" min="0" id="sc-hp" value="${m.hp ?? ''}"></label>
+        <label class="field"><span>${esc(away)}</span><input class="input" type="number" min="0" id="sc-ap" value="${m.ap ?? ''}"></label>
+      </div>` : ''}
+
+      <div class="subhead">Thông tin bổ sung</div>
+      <div class="grid2">
+        <label class="field"><span>Cầu thủ xuất sắc nhất</span><input class="input" id="sc-mvp" value="${esc(m.mvp||'')}" placeholder="Tên cầu thủ"></label>
+        <label class="field"><span>Trọng tài</span><input class="input" id="sc-ref" value="${esc(m.referee||'')}" placeholder="Tên trọng tài"></label>
+      </div>
+      <label class="field"><span>Ghi chú</span>
+        <textarea class="input" id="sc-note" rows="2" placeholder="Diễn biến, sự cố...">${esc(m.note||'')}</textarea></label>`,
+    footer: `<button class="btn danger" id="sc-clear">Xóa kết quả</button>
+             <div class="spacer"></div>
+             <button class="btn ghost" data-close>Hủy</button>
+             <button class="btn primary" id="sc-save">Lưu kết quả</button>`
+  });
+
+  ov.querySelector('#sc-save').addEventListener('click', () => {
+    const val = id => ov.querySelector('#' + id) ? ov.querySelector('#' + id).value : '';
+    const num = id => { const v = val(id); return v === '' ? null : Math.max(0, parseInt(v, 10) || 0); };
+
+    const hs = num('sc-hs'), as = num('sc-as');
+    if((hs == null) !== (as == null)) return toast('Vui lòng nhập đủ tỉ số 2 đội', 'err');
+
+    if(isKO && hs != null && hs === as){
+      const hp = num('sc-hp'), ap = num('sc-ap');
+      if(hp == null || ap == null || hp === ap)
+        return toast('Vòng loại trực tiếp cần phân định thắng thua bằng luân lưu', 'err');
+    }
+
+    m.hs = hs; m.as = as;
+    m.hy = num('sc-hy') || 0; m.hr = num('sc-hr') || 0;
+    m.ay = num('sc-ay') || 0; m.ar = num('sc-ar') || 0;
+    m.hp = isKO ? num('sc-hp') : null;
+    m.ap = isKO ? num('sc-ap') : null;
+    m.date = val('sc-date'); m.time = val('sc-time'); m.pitch = val('sc-pitch');
+    m.mvp = val('sc-mvp'); m.referee = val('sc-ref'); m.note = val('sc-note');
+
+    syncBracket();
+    save(); render(); ov.remove();
+    toast('Đã lưu kết quả', 'ok');
+  });
+
+  ov.querySelector('#sc-clear').addEventListener('click', () => {
+    m.hs = null; m.as = null; m.hp = null; m.ap = null;
+    m.hy = 0; m.ay = 0; m.hr = 0; m.ar = 0;
+    syncBracket();
+    save(); render(); ov.remove();
+    toast('Đã xóa kết quả', 'ok');
+  });
+}
+
+/* =========================================================
+   VIEWS
+   ========================================================= */
+function emptyState(icon, title, desc, action){
+  return `<div class="empty">
+    <div class="ico">${icon}</div>
+    <h3>${esc(title)}</h3>
+    <p>${esc(desc)}</p>
+    ${action || ''}
+  </div>`;
+}
+
+/* ----- Đội bóng ----- */
+function viewTeams(){
+  const q = norm(searchQ);
+  const list = S.teams.filter(t => !q || norm(t.name).includes(q) || norm(t.captain).includes(q) || norm(t.phone).includes(q));
+
+  return `
+  <div class="page-head">
+    <div>
+      <h1>Đội bóng</h1>
+      <p class="muted">${S.teams.length} đội · tối đa 7 thành viên mỗi đội (bao gồm đội trưởng)</p>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="template">⬇ File mẫu</button>
+      <button class="btn ghost" data-act="import">⬆ Nhập Excel</button>
+      <button class="btn primary" data-act="add-team">+ Thêm đội bóng</button>
+    </div>
+  </div>
+
+  ${S.teams.length ? `<div class="toolbar">
+    <input class="input search" id="teamSearch" placeholder="🔍 Tìm đội bóng, đội trưởng, SĐT..." value="${esc(searchQ)}">
+  </div>` : ''}
+
+  ${!S.teams.length
+    ? emptyState('⚽', 'Chưa có đội bóng nào',
+        'Thêm đội bóng thủ công hoặc nhập nhanh từ file Excel để bắt đầu giải đấu.',
+        `<button class="btn primary" data-act="add-team">+ Thêm đội bóng</button>
+         <button class="btn ghost" data-act="import" style="margin-left:8px">⬆ Nhập Excel</button>`)
+    : (list.length
+        ? `<div class="cards">${list.map(teamCard).join('')}</div>`
+        : emptyState('🔍', 'Không tìm thấy đội bóng', 'Thử từ khóa khác xem sao.'))}
+
+  <input type="file" id="excelInput" accept=".xlsx,.xls,.csv" hidden>
+  `;
+}
+
+function teamCard(t){
+  const members = (t.members || []).filter(Boolean);
+  const total = members.length + 1;
+  return `<div class="card">
+    <div class="team-top">
+      <div class="avatar">${esc(initials(t.name))}</div>
+      <div class="team-info">
+        <h3>${esc(t.name)}</h3>
+        <div class="muted small">Đội trưởng: ${esc(t.captain || '—')}${t.phone ? ' · ' + esc(t.phone) : ''}</div>
+      </div>
+      <div class="row-actions">
+        <button class="icon-btn" data-act="edit-team" data-id="${t.id}" title="Sửa">✏️</button>
+        <button class="icon-btn" data-act="del-team" data-id="${t.id}" title="Xóa">🗑️</button>
+      </div>
+    </div>
+    <div class="chips">
+      <span class="chip cap">${esc(t.captain || '—')} <em>ĐT</em></span>
+      ${members.map(m => `<span class="chip">${esc(m)}</span>`).join('')}
+    </div>
+    <div class="muted small mt">${total}/7 thành viên</div>
+  </div>`;
+}
+
+/* ----- Vòng bảng ----- */
+function viewGroups(){
+  if(S.teams.length < 2){
+    return emptyState('👥', 'Chưa đủ đội bóng',
+      'Cần ít nhất 2 đội bóng để chia bảng và xếp lịch thi đấu.',
+      `<button class="btn primary" data-act="tab" data-tab="teams">Đi tới Đội bóng</button>`);
+  }
+
+  const unassigned = S.teams.filter(t => !S.groups.some(g => g.teamIds.includes(t.id)));
+  const hasGroupMatches = S.matches.some(m => m.stage === 'group');
+
+  return `
+  <div class="page-head">
+    <div>
+      <h1>Vòng bảng</h1>
+      <p class="muted">Chia bảng, xếp lịch và theo dõi bảng xếp hạng · Điểm: thắng ${S.settings.pointsWin} · hòa ${S.settings.pointsDraw} · thua 0</p>
+    </div>
+    <div class="actions">
+      <button class="btn ghost" data-act="auto-groups">⚙️ Chia bảng tự động</button>
+      <button class="btn ghost" data-act="add-group">+ Thêm bảng</button>
+      ${hasGroupMatches ? `<button class="btn danger" data-act="clear-group-schedule">Xóa lịch vòng bảng</button>` : ''}
+      <button class="btn primary" data-act="gen-group-schedule">📅 Tạo lịch vòng bảng</button>
+    </div>
+  </div>
+
+  ${!S.groups.length
+    ? emptyState('🗂️', 'Chưa có bảng đấu nào',
+        'Chia đội thành các bảng để bắt đầu vòng bảng.',
+        `<button class="btn primary" data-act="auto-groups">⚙️ Chia bảng tự động</button>`)
+    : `<div class="cards" style="grid-template-columns:repeat(auto-fill,minmax(400px,1fr))">
+        ${S.groups.map(g => groupCard(g, unassigned)).join('')}
+      </div>`}
+  `;
+}
+
+function groupCard(g, unassigned){
+  const st = computeStandings(g.id);
+  const hasMatches = S.matches.some(m => m.stage === 'group' && m.groupId === g.id);
+  const q = S.settings.qualifiers;
+
+  return `<div class="card">
+    <div class="card-head">
+      <h3>${esc(g.name)}</h3>
+      <div class="row-actions">
+        <span class="muted small">${g.teamIds.length} đội</span>
+        <button class="icon-btn" data-act="del-group" data-id="${g.id}" title="Xóa bảng">🗑️</button>
+      </div>
+    </div>
+
+    ${hasMatches && st.length ? `
+      <table class="table standings">
+        <thead><tr>
+          <th>#</th><th>Đội</th><th>Tr</th><th>T</th><th>H</th><th>B</th><th>HS</th><th>Đ</th>
+        </tr></thead>
+        <tbody>${st.map((r,i)=>`<tr class="${i < q ? 'qualify' : ''}">
+          <td>${i+1}</td>
+          <td class="tname">${esc(teamName(r.id))}</td>
+          <td>${r.p}</td><td>${r.w}</td><td>${r.d}</td><td>${r.l}</td>
+          <td>${r.gd > 0 ? '+' : ''}${r.gd}</td>
+          <td><b>${r.pts}</b></td>
+        </tr>`).join('')}</tbody>
+      </table>` : ''}
+
+    <div class="chips">
+      ${g.teamIds.map(id => `<span class="chip">${esc(teamName(id))}
+        <button class="chip-x" data-act="rm-from-group" data-g="${g.id}" data-id="${id}" title="Gỡ khỏi bảng">✕</button>
+      </span>`).join('') || '<span class="muted small">Chưa có đội nào trong bảng</span>'}
+    </div>
+
+    ${unassigned.length ? `
+      <select class="input mt" data-act="add-to-group" data-g="${g.id}">
+        <option value="">+ Thêm đội vào ${esc(g.name)}...</option>
+        ${unassigned.map(t => `<option value="${t.id}">${esc(t.name)}</option>`).join('')}
+      </select>` : ''}
+  </div>`;
+}
+
+/* ----- Lịch thi đấu ----- */
+function viewSchedule(){
+  if(!S.matches.length){
+    return emptyState('📅', 'Chưa có trận đấu nào',
+      'Hãy chia bảng và tạo lịch thi đấu vòng bảng, hoặc tạo nhánh đấu loại trực tiếp.',
+      `<button class="btn primary" data-act="tab" data-tab="groups">Đi tới Vòng bảng</button>`);
+  }
+
+  let list = S.matches.slice();
+  if(fStage !== 'all') list = list.filter(m => fStage === 'group' ? m.stage === 'group' : m.stage === 'ko');
+  if(fGroup !== 'all') list = list.filter(m => m.groupId === fGroup);
+  if(fStatus !== 'all') list = list.filter(m => {
+    const done = m.hs != null && m.as != null;
+    return fStatus === 'done' ? done : !done;
+  });
+
+  list.sort((a,b) => {
+    const da = a.date || '9999-99-99', db = b.date || '9999-99-99';
+    if(da !== db) return da < db ? -1 : 1;
+    return (a.time || '').localeCompare(b.time || '');
+  });
+
+  // group by date
+  const byDate = {};
+  list.forEach(m => {
+    const k = m.date || '';
+    (byDate[k] = byDate[k] || []).push(m);
+  });
+
+  const koRounds = [...new Set(S.matches.filter(m => m.stage === 'ko').map(m => m.roundName))];
+
+  return `
+  <div class="page-head">
+    <div>
+      <h1>Lịch thi đấu</h1>
+      <p class="muted">${S.matches.length} trận · ${S.matches.filter(m=>m.hs!=null&&m.as!=null).length} đã có kết quả</p>
+    </div>
+  </div>
+
+  <div class="toolbar">
+    <select class="input" style="max-width:190px" data-act="f-stage">
+      <option value="all" ${fStage==='all'?'selected':''}>Tất cả giai đoạn</option>
+      <option value="group" ${fStage==='group'?'selected':''}>Vòng bảng</option>
+      <option value="ko" ${fStage==='ko'?'selected':''}>Loại trực tiếp</option>
+    </select>
+    <select class="input" style="max-width:190px" data-act="f-group">
+      <option value="all" ${fGroup==='all'?'selected':''}>Tất cả bảng</option>
+      ${S.groups.map(g => `<option value="${g.id}" ${fGroup===g.id?'selected':''}>${esc(g.name)}</option>`).join('')}
+    </select>
+    <select class="input" style="max-width:190px" data-act="f-status">
+      <option value="all" ${fStatus==='all'?'selected':''}>Mọi trạng thái</option>
+      <option value="todo" ${fStatus==='todo'?'selected':''}>Chưa đá</option>
+      <option value="done" ${fStatus==='done'?'selected':''}>Đã kết thúc</option>
+    </select>
+  </div>
+
+  ${!list.length
+    ? emptyState('🔍', 'Không có trận đấu phù hợp', 'Thử đổi bộ lọc xem sao.')
+    : Object.keys(byDate).sort((a,b)=> (a||'9999')<(b||'9999')?-1:1).map(date => `
+        <div class="day-group">
+          <div class="day-head"><span>${esc(dayLabel(date))}</span><span class="line"></span>
+            <span class="muted small">${byDate[date].length} trận</span></div>
+          ${byDate[date].map(matchRow).join('')}
+        </div>`).join('')}
+  `;
+}
+
+function matchRow(m){
+  const done = m.hs != null && m.as != null;
+  const h = teamName(m.homeId), a = teamName(m.awayId);
+  const hw = done && (winnerOf(m) === m.homeId);
+  const aw = done && (winnerOf(m) === m.awayId);
+  const hasCards = (m.hy||0)+(m.ay||0)+(m.hr||0)+(m.ar||0) > 0;
+
+  return `<div class="match" data-act="score" data-id="${m.id}">
+    <div class="m-top">
+      <span class="badge">${esc(m.roundName || '')}</span>
+      ${m.groupId ? `<span class="badge soft">${esc(groupName(m.groupId))}</span>` : ''}
+      ${done ? `<span class="badge done">Đã đá</span>` : `<span class="badge live">Chưa đá</span>`}
+      <span class="spacer"></span>
+      <span class="muted small">${m.time ? '⏰ ' + m.time : ''}${m.pitch ? ' · 📍 ' + esc(m.pitch) : ''}</span>
+    </div>
+    <div class="m-mid">
+      <div class="m-team home ${hw?'win':''}">${esc(h)}</div>
+      <div class="m-score ${done?'done':''}">${done ? `${m.hs} - ${m.as}` : 'vs'}</div>
+      <div class="m-team away ${aw?'win':''}">${esc(a)}</div>
+    </div>
+    ${done && (m.hp != null || hasCards) ? `<div class="cards-line">
+      ${m.hp != null ? `<span>Luân lưu: ${m.hp} - ${m.ap}</span>` : ''}
+      ${hasCards ? `<span>🟨 ${m.hy||0}-${m.ay||0}</span><span>🟥 ${m.hr||0}-${m.ar||0}</span>` : ''}
+    </div>` : ''}
+  </div>`;
+}
+
+/* ----- Nhánh đấu ----- */
+function viewBracket(){
+  const ko = S.matches.filter(m => m.stage === 'ko');
+
+  if(!ko.length){
+    const seeds = getSeeds();
+    const n = seeds.length;
+    const valid = n >= 2 && (n & (n-1)) === 0;
+    return `
+    <div class="page-head">
+      <div><h1>Nhánh đấu loại trực tiếp</h1>
+      <p class="muted">Tứ kết · Bán kết · Chung kết · Tranh hạng 3</p></div>
+    </div>
+    ${emptyState('🏆', 'Chưa tạo nhánh đấu',
+      `Hiện có ${n} đội đủ điều kiện đi tiếp (${S.settings.qualifiers} đội/bảng × ${S.groups.length} bảng).
+       ${valid ? 'Nhấn nút bên dưới để tạo nhánh đấu.' : 'Số đội đi tiếp phải là 4, 8 hoặc 16 — hãy chỉnh trong Cài đặt hoặc thêm bảng.'}`,
+      `<button class="btn primary" data-act="gen-ko" ${valid?'':'disabled'}>🏆 Tạo nhánh đấu</button>
+       <button class="btn ghost" data-act="tab" data-tab="settings" style="margin-left:8px">⚙️ Cài đặt</button>`)}
+    `;
+  }
+
+  const maxRound = Math.max(...ko.map(m => m.round));
+  const cols = [];
+  for(let r=0; r<=maxRound; r++){
+    const ms = ko.filter(m => m.round === r && !m.thirdPlace).sort((a,b) => a.slot - b.slot);
+    const third = ko.filter(m => m.thirdPlace && m.round === r);
+    if(ms.length || third.length){
+      cols.push({ name: ms[0]?.roundName || 'Tranh hạng 3', matches: ms.concat(third) });
+    }
+  }
+
+  const champ = ko.find(m => m.round === maxRound && !m.thirdPlace);
+  const champion = champ ? winnerOf(champ) : null;
+
+  return `
+  <div class="page-head">
+    <div><h1>Nhánh đấu loại trực tiếp</h1>
+      <p class="muted">Nhấn vào một trận để nhập tỉ số</p></div>
+    <div class="actions">
+      ${champion ? `<span class="badge" style="padding:8px 14px;font-size:13px">🏆 Vô địch: ${esc(teamName(champion))}</span>` : ''}
+      <button class="btn ghost" data-act="gen-ko">🔄 Tạo lại nhánh đấu</button>
+    </div>
+  </div>
+  <div class="bracket">
+    ${cols.map(c => `<div class="bracket-col">
+      <h4>${esc(c.name)}</h4>
+      ${c.matches.map(bracketMatch).join('')}
+    </div>`).join('')}
+  </div>`;
+}
+
+function bracketMatch(m){
+  const done = m.hs != null && m.as != null;
+  const w = winnerOf(m);
+  const rows = [[m.homeId, m.hs, m.hp], [m.awayId, m.as, m.ap]];
+  return `<div class="bmatch ${m.thirdPlace?'third':''}" data-act="score" data-id="${m.id}">
+    ${rows.map(([tid, sc, pn]) => `
+      <div class="brow ${tid && w === tid ? 'win' : ''}">
+        <span class="bname">${tid ? esc(teamName(tid)) : '<i>Chờ kết quả</i>'}</span>
+        <span class="bscore">${sc != null ? sc : '–'}${pn != null ? `<em>(${pn})</em>` : ''}</span>
+      </div>`).join('')}
+    <div class="bmeta">
+      <span>${m.date ? fmtDate(m.date) : 'Chưa xếp'}</span>
+      <span>${esc(m.time || '')}${m.pitch ? ' · ' + esc(m.pitch) : ''}</span>
+    </div>
+  </div>`;
+}
+
+/* ----- Cài đặt ----- */
+function viewSettings(){
+  return `
+  <div class="page-head">
+    <div><h1>Cài đặt giải đấu</h1><p class="muted">Thể thức tính điểm và cấu hình chung</p></div>
+  </div>
+
+  <div class="card" style="max-width:640px;margin-bottom:16px">
+    <div class="card-head"><h3>Thông tin giải</h3></div>
+    <label class="field"><span>Tên giải đấu</span>
+      <input class="input" id="set-name" value="${esc(S.name)}"></label>
+  </div>
+
+  <div class="card" style="max-width:640px;margin-bottom:16px">
+    <div class="card-head"><h3>Thể thức</h3></div>
+    <div class="grid3">
+      <label class="field"><span>Điểm thắng</span><input class="input" type="number" id="set-win" min="0" value="${S.settings.pointsWin}"></label>
+      <label class="field"><span>Điểm hòa</span><input class="input" type="number" id="set-draw" min="0" value="${S.settings.pointsDraw}"></label>
+      <label class="field"><span>Đội đi tiếp / bảng</span><input class="input" type="number" id="set-qual" min="1" max="4" value="${S.settings.qualifiers}"></label>
+    </div>
+    <button class="btn primary" data-act="save-settings">Lưu cài đặt</button>
+  </div>
+
+  <div class="card" style="max-width:640px">
+    <div class="card-head"><h3>Dữ liệu</h3></div>
+    <p class="muted small" style="margin-bottom:14px">Toàn bộ dữ liệu được lưu trong trình duyệt này. Hãy sao lưu định kỳ.</p>
+    <div class="actions">
+      <button class="btn ghost" data-act="export-json">⬇ Xuất dữ liệu (JSON)</button>
+      <button class="btn ghost" data-act="import-json">⬆ Nhập dữ liệu</button>
+      <button class="btn danger" data-act="reset-all">🗑️ Xóa toàn bộ dữ liệu</button>
+    </div>
+    <input type="file" id="jsonInput" accept=".json" hidden>
+  </div>`;
+}
+
+/* =========================================================
+   RENDER
+   ========================================================= */
+function render(){
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === S.tab));
+  document.getElementById('brandName').textContent = S.name || 'Giải bóng đá';
+  const views = { teams: viewTeams, groups: viewGroups, schedule: viewSchedule, bracket: viewBracket, settings: viewSettings };
+  document.getElementById('view').innerHTML = (views[S.tab] || viewTeams)();
+}
+
+/* =========================================================
+   EVENTS
+   ========================================================= */
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act;
+  const id = el.dataset.id;
+
+  switch(act){
+    case 'tab':
+      S.tab = el.dataset.tab; save(); render(); window.scrollTo({top:0,behavior:'smooth'});
+      break;
+
+    /* Đội bóng */
+    case 'add-team': openTeamModal(null); break;
+    case 'edit-team': openTeamModal(id); break;
+    case 'del-team': deleteTeam(id); break;
+    case 'template': downloadTemplate(); break;
+    case 'import': document.getElementById('excelInput')?.click(); break;
+
+    /* Vòng bảng */
+    case 'auto-groups': autoGroups(); break;
+    case 'add-group': {
+      const letters = 'ABCDEFGHIJ';
+      const name = 'Bảng ' + (letters[S.groups.length] || (S.groups.length + 1));
+      S.groups.push({ id: uid(), name, teamIds: [] });
+      save(); render(); break;
+    }
+    case 'del-group': {
+      if(!confirm('Xóa bảng này và toàn bộ trận đấu của bảng?')) break;
+      S.matches = S.matches.filter(m => m.groupId !== id);
+      S.groups = S.groups.filter(g => g.id !== id);
+      save(); render(); break;
+    }
+    case 'rm-from-group': {
+      const g = S.groups.find(x => x.id === el.dataset.g);
+      if(!g) break;
+      g.teamIds = g.teamIds.filter(x => x !== id);
+      S.matches = S.matches.filter(m => !(m.stage === 'group' && m.groupId === g.id && (m.homeId === id || m.awayId === id)));
+      save(); render(); break;
+    }
+    case 'gen-group-schedule': openGroupScheduleModal(); break;
+    case 'clear-group-schedule': {
+      if(!confirm('Xóa toàn bộ lịch thi đấu vòng bảng?')) break;
+      S.matches = S.matches.filter(m => m.stage !== 'group');
+      save(); render(); toast('Đã xóa lịch vòng bảng', 'ok'); break;
+    }
+
+    /* Nhánh đấu */
+    case 'gen-ko': {
+      if(S.matches.some(m => m.stage === 'ko') && !confirm('Tạo lại nhánh đấu sẽ xóa toàn bộ kết quả vòng loại trực tiếp. Tiếp tục?')) break;
+      generateKnockout(); break;
+    }
+
+    /* Trận đấu */
+    case 'score': openScoreModal(id); break;
+
+    /* Cài đặt */
+    case 'save-settings': {
+      S.name = document.getElementById('set-name').value.trim() || 'Giải bóng đá';
+      S.settings.pointsWin = Math.max(0, +document.getElementById('set-win').value || 0);
+      S.settings.pointsDraw = Math.max(0, +document.getElementById('set-draw').value || 0);
+      S.settings.qualifiers = Math.max(1, Math.min(4, +document.getElementById('set-qual').value || 1));
+      save(); render(); toast('Đã lưu cài đặt', 'ok'); break;
+    }
+    case 'export-json': {
+      const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = 'giai-bong-da-backup.json';
+      a.click();
+      URL.revokeObjectURL(a.href);
+      toast('Đã xuất dữ liệu', 'ok'); break;
+    }
+    case 'import-json': document.getElementById('jsonInput')?.click(); break;
+    case 'reset-all': {
+      if(!confirm('XÓA TOÀN BỘ dữ liệu giải đấu? Hành động này không thể hoàn tác.')) break;
+      if(!confirm('Bạn chắc chắn chứ? Toàn bộ đội bóng, lịch đấu và kết quả sẽ bị xóa.')) break;
+      S = defaultState(); save(); render(); toast('Đã xóa toàn bộ dữ liệu', 'ok'); break;
+    }
+  }
+});
+
+/* Change events */
+document.addEventListener('change', e => {
+  const t = e.target;
+
+  /* --- File inputs phải xử lý TRƯỚC, vì chúng không có [data-act] --- */
+  if(t.id === 'excelInput' && t.files && t.files[0]){
+    importExcel(t.files[0]);
+    t.value = '';
+    return;
+  }
+  if(t.id === 'jsonInput' && t.files && t.files[0]){
+    const r = new FileReader();
+    r.onload = ev => {
+      try{
+        const p = JSON.parse(ev.target.result);
+        const d = defaultState();
+        S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
+        save(); render(); toast('Đã nhập dữ liệu', 'ok');
+      }catch(err){ toast('File không hợp lệ', 'err'); }
+    };
+    r.readAsText(t.files[0]);
+    t.value = '';
+    return;
+  }
+
+  /* --- Các change khác (có [data-act]) --- */
+  const el = t.closest('[data-act]');
+  if(!el) return;
+  const act = el.dataset.act;
+
+  if(act === 'add-to-group'){
+    const g = S.groups.find(x => x.id === el.dataset.g);
+    if(g && el.value){
+      S.groups.forEach(o => o.teamIds = o.teamIds.filter(x => x !== el.value));
+      g.teamIds.push(el.value);
+      save(); render();
+    }
+  }
+  if(act === 'f-stage'){ fStage = el.value; render(); }
+  if(act === 'f-group'){ fGroup = el.value; render(); }
+  if(act === 'f-status'){ fStatus = el.value; render(); }
+});
+
+/* Search input */
+document.addEventListener('input', e => {
+  if(e.target.id === 'teamSearch'){
+    searchQ = e.target.value;
+    const pos = e.target.selectionStart;
+    render();
+    const inp = document.getElementById('teamSearch');
+    if(inp){ inp.focus(); inp.setSelectionRange(pos, pos); }
+  }
+});
+
+/* =========================================================
+   INIT
+   ========================================================= */
+syncBracket();
+render();
+</script>
+</body>
+</html>
