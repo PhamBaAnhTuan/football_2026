@@ -237,6 +237,92 @@ main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
 .toast.ok{background:var(--brand-dark)}
 .toast.err{background:#b91c1c}
 
+/* ---------- Brand ---------- */
+.logo-text{display:flex;flex-direction:column;line-height:1.15}
+.logo-text small{font-size:11.5px;font-weight:600;color:var(--muted);letter-spacing:.01em}
+
+/* ---------- Context bar (bộ môn · nam/nữ) ---------- */
+.ctxbar{border-top:1px solid var(--line);background:linear-gradient(180deg,#fafcfb 0%,#fff 100%)}
+.cwrap{max-width:1200px;margin:0 auto;padding:9px 20px;display:flex;align-items:center;gap:12px;overflow-x:auto;scrollbar-width:thin}
+.sport-pills{display:flex;gap:6px;flex:0 0 auto}
+.sport-pill{
+  display:inline-flex;align-items:center;gap:7px;padding:4px 10px 4px 4px;border-radius:999px;border:1px solid var(--line);
+  background:#fff;font-family:inherit;font-weight:600;font-size:13px;color:#334155;cursor:pointer;white-space:nowrap;transition:.15s
+}
+.sport-pill .ic{width:26px;height:26px;border-radius:50%;background:#f1f5f9;display:grid;place-items:center;font-size:14px;transition:.15s}
+.sport-pill .cnt{font-size:11px;font-weight:700;color:var(--muted);background:#f1f5f9;border-radius:999px;padding:2px 7px}
+.sport-pill:hover{border-color:#cbd5e1;transform:translateY(-1px)}
+.sport-pill.active{background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 4px 12px rgba(15,23,42,.18)}
+.sport-pill.active .ic{background:rgba(255,255,255,.14)}
+.sport-pill.active .cnt{background:rgba(255,255,255,.16);color:#fff}
+.vsep{width:1px;height:26px;background:var(--line);flex:0 0 auto}
+.gseg{display:flex;gap:3px;padding:3px;background:var(--bg);border:1px solid var(--line);border-radius:11px;flex:0 0 auto}
+.gbtn{
+  border:1px solid transparent;background:transparent;padding:5px 13px;border-radius:8px;font-family:inherit;font-size:13px;
+  font-weight:600;color:var(--muted);cursor:pointer;white-space:nowrap;transition:.15s
+}
+.gbtn:hover{color:var(--ink)}
+.gbtn.active{background:#fff;box-shadow:0 1px 3px rgba(15,23,42,.1)}
+.gbtn.male.active{color:#1d4ed8}
+.gbtn.female.active{color:#be185d}
+.gbtn.missing{border:1px dashed #cbd5e1;color:#94a3b8;font-weight:500}
+.gbtn.missing:hover{border-color:var(--brand);color:var(--brand-dark);background:#fff}
+.ctx-current{display:flex;align-items:center;gap:7px;font-size:13px;white-space:nowrap;min-width:0}
+.ctx-current b{max-width:260px;overflow:hidden;text-overflow:ellipsis}
+.ctx-actions{display:flex;gap:6px;flex:0 0 auto}
+@media(max-width:900px){.ctx-current{display:none}}
+.gbadge{display:inline-flex;align-items:center;gap:4px;padding:2.5px 9px;border-radius:999px;font-size:11.5px;font-weight:700;white-space:nowrap}
+.gbadge.male{background:#eff6ff;color:#1d4ed8}
+.gbadge.female{background:#fdf2f8;color:#be185d}
+
+/* ---------- Tournament manager ---------- */
+.mg-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:18px}
+.mg-stats>div{background:linear-gradient(135deg,var(--brand-soft),#f4fbf8);border-radius:12px;padding:12px 14px}
+.mg-stats b{display:block;font-size:20px;font-weight:800;color:var(--brand-dark);font-variant-numeric:tabular-nums}
+.mg-stats span{font-size:12px;color:var(--muted);font-weight:600}
+@media(max-width:600px){.mg-stats{grid-template-columns:1fr 1fr}}
+.sport-sec{margin-bottom:16px}
+.sport-head{display:flex;align-items:center;gap:9px;margin-bottom:9px}
+.sport-head h4{font-size:14px}
+.sport-ic{width:32px;height:32px;border-radius:10px;background:#f1f5f9;display:grid;place-items:center;font-size:17px;flex:0 0 auto}
+.tgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+@media(max-width:600px){.tgrid{grid-template-columns:1fr}}
+.tcard{border:1px solid var(--line);border-radius:12px;padding:10px 12px 12px;cursor:pointer;transition:.15s;background:#fff}
+.tcard:hover{border-color:var(--brand);box-shadow:0 6px 18px rgba(14,164,122,.12);transform:translateY(-1px)}
+.tcard.active{border-color:var(--brand);box-shadow:0 0 0 3px rgba(14,164,122,.13)}
+.tc-top{display:flex;align-items:center;gap:6px}
+.tc-name{font-weight:700;font-size:14px;margin-top:6px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tc-stats{display:flex;gap:14px;margin-top:6px;font-size:12px;color:var(--muted)}
+.tc-stats b{color:var(--ink)}
+.tc-champ{margin-top:8px;font-size:12px;font-weight:700;color:#92400e;background:#fef3c7;border-radius:8px;padding:4px 9px;display:inline-block}
+.tslot{
+  border:1.5px dashed #cbd5e1;border-radius:12px;background:#fbfcfd;color:var(--muted);font-family:inherit;font-weight:600;
+  font-size:13px;cursor:pointer;min-height:96px;transition:.15s
+}
+.tslot:hover{border-color:var(--brand);color:var(--brand-dark);background:var(--brand-soft)}
+
+/* ---------- Choice grid ---------- */
+.choice-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(104px,1fr));gap:8px}
+.choice-grid.two{grid-template-columns:1fr 1fr}
+.choice{
+  display:flex;flex-direction:column;align-items:center;gap:3px;padding:11px 8px;border:1px solid var(--line);border-radius:12px;
+  background:#fff;font-family:inherit;font-size:13px;font-weight:600;color:#334155;cursor:pointer;transition:.15s
+}
+.choice .ic{font-size:22px;line-height:1.1}
+.choice small{font-size:10.5px;font-weight:500;color:var(--muted)}
+.choice:hover{border-color:#cbd5e1;background:#f8fafc}
+.choice.active{border-color:var(--brand);background:var(--brand-soft);color:var(--brand-dark);box-shadow:0 0 0 3px rgba(14,164,122,.12)}
+.choice.full:not(.active){opacity:.55}
+.choice:disabled{opacity:.4;cursor:not-allowed;background:#f8fafc}
+.choice.g-male.active{border-color:#3b82f6;background:#eff6ff;color:#1d4ed8;box-shadow:0 0 0 3px rgba(59,130,246,.14)}
+.choice.g-female.active{border-color:#ec4899;background:#fdf2f8;color:#be185d;box-shadow:0 0 0 3px rgba(236,72,153,.14)}
+.check{display:flex;align-items:center;gap:8px;font-size:13px;color:#475569;cursor:pointer}
+.icon-pick{display:grid;grid-template-columns:repeat(10,1fr);gap:6px}
+.ip{aspect-ratio:1;border:1px solid var(--line);border-radius:9px;background:#fff;font-size:18px;cursor:pointer;transition:.12s}
+.ip:hover{background:#f8fafc}
+.ip.active{border-color:var(--brand);background:var(--brand-soft);box-shadow:0 0 0 3px rgba(14,164,122,.12)}
+.cur-t{display:flex;align-items:center;gap:11px;padding:10px 12px;background:#f8fafc;border-radius:11px;margin-bottom:14px}
+
 ::-webkit-scrollbar{height:9px;width:9px}
 ::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:9px}
 ::-webkit-scrollbar-thumb:hover{background:#94a3b8}
@@ -246,9 +332,9 @@ main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
 
 <header>
   <div class="hwrap">
-    <div class="logo"><div class="ball">⚽</div><span id="brandName">Giải bóng đá</span></div>
+    <div class="logo"><div class="ball" id="brandIcon">⚽</div><div class="logo-text"><span id="brandName">Hội thao</span><small id="brandSub"></small></div></div>
     <nav class="tabs" id="tabs">
-      <button class="tab" data-act="tab" data-tab="teams">Đội bóng</button>
+      <button class="tab" data-act="tab" data-tab="teams">Đội thi đấu</button>
       <button class="tab" data-act="tab" data-tab="groups">Vòng bảng</button>
       <button class="tab" data-act="tab" data-tab="schedule">Lịch thi đấu</button>
       <button class="tab" data-act="tab" data-tab="bracket">Nhánh đấu</button>
@@ -259,6 +345,7 @@ main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
       <button class="btn sm primary" data-act="export-excel-results" title="Xuất file Excel kết quả giải đấu & đội bóng">📊 Xuất Excel kết quả</button>
     </div>
   </div>
+  <div class="ctxbar"><div class="cwrap" id="ctx"></div></div>
 </header>
 
 <main id="view"></main>
@@ -267,31 +354,99 @@ main{max-width:1200px;margin:0 auto;padding:22px 20px 80px}
 /* =========================================================
    STATE
    ========================================================= */
-const LS_KEY = 'fagleague_v1';
+const LS_KEY = 'fagleague_v2';
+const LS_KEY_OLD = 'fagleague_v1';
 const uid = () => Math.random().toString(36).slice(2, 10);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const norm = s => String(s || '').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/đ/g,'d').trim();
 
-function defaultState(){
+/* R = dữ liệu gốc (sự kiện, bộ môn, nhiều giải) · S = giải đang được mở */
+let R = null, S = null;
+
+const DEFAULT_SPORTS = [
+  { id:'football',    name:'Bóng đá',     icon:'⚽' },
+  { id:'volleyball',  name:'Bóng chuyền', icon:'🏐' },
+  { id:'basketball',  name:'Bóng rổ',     icon:'🏀' },
+  { id:'badminton',   name:'Cầu lông',    icon:'🏸' },
+  { id:'tabletennis', name:'Bóng bàn',    icon:'🏓' },
+  { id:'tugofwar',    name:'Kéo co',      icon:'🪢' }
+];
+const GENDERS = {
+  male:   { label:'Nam', icon:'♂' },
+  female: { label:'Nữ',  icon:'♀' }
+};
+const defaultSettings = () => ({ pointsWin: 3, pointsDraw: 1, qualifiers: 2 });
+const sportOf = id => ((R && R.sports) || DEFAULT_SPORTS).find(s => s.id === id) || { id, name: id || 'Khác', icon: '🏅' };
+const genderLabel = g => GENDERS[g]?.label || '';
+function autoName(sportId, gender){
+  return `Giải ${sportOf(sportId).name.toLowerCase()} ${genderLabel(gender).toLowerCase()}`.trim();
+}
+function makeTournament(sportId, gender, name){
+  return { id: uid(), sportId, gender, name: name || autoName(sportId, gender),
+    teams: [], groups: [], matches: [], settings: defaultSettings() };
+}
+function normTournament(t){
+  const sportId = t.sportId || 'football';
+  const gender = GENDERS[t.gender] ? t.gender : 'male';
   return {
-    name: 'Giải bóng đá phong trào',
-    teams: [], groups: [], matches: [],
-    settings: { pointsWin: 3, pointsDraw: 1, qualifiers: 2 },
-    tab: 'teams'
+    ...t, id: t.id || uid(), sportId, gender,
+    name: t.name || autoName(sportId, gender),
+    teams: Array.isArray(t.teams) ? t.teams : [],
+    groups: Array.isArray(t.groups) ? t.groups : [],
+    matches: Array.isArray(t.matches) ? t.matches : [],
+    settings: { ...defaultSettings(), ...(t.settings || {}) }
   };
+}
+function defaultRoot(){
+  const a = makeTournament('football', 'male'), b = makeTournament('football', 'female');
+  return { version: 2, name: 'Hội thao UDA 2026', sports: DEFAULT_SPORTS.map(s => ({ ...s })),
+    tournaments: [a, b], activeId: a.id, tab: 'teams' };
+}
+function normalizeRoot(p){
+  if(!p || typeof p !== 'object') return defaultRoot();
+  let sports, tournaments, name, activeId = p.activeId;
+  if(Array.isArray(p.tournaments)){
+    sports = (Array.isArray(p.sports) && p.sports.length ? p.sports : DEFAULT_SPORTS).map(s => ({ ...s }));
+    tournaments = p.tournaments.map(normTournament);
+    name = p.name || 'Hội thao';
+  }else{
+    // Dữ liệu cũ (1 giải duy nhất) → chuyển thành giải Bóng đá Nam
+    sports = DEFAULT_SPORTS.map(s => ({ ...s }));
+    tournaments = [normTournament({ sportId: 'football', gender: 'male', name: 'Giải bóng đá nam',
+      teams: p.teams, groups: p.groups, matches: p.matches, settings: p.settings })];
+    name = p.name || 'Hội thao UDA 2026';
+  }
+  tournaments.forEach(t => {
+    if(!sports.some(s => s.id === t.sportId)) sports.push({ id: t.sportId, name: t.sportId, icon: '🏅' });
+  });
+  if(!tournaments.length) tournaments.push(makeTournament(sports[0]?.id || 'football', 'male'));
+  if(!tournaments.some(t => t.id === activeId)) activeId = tournaments[0].id;
+  return { version: 2, name, sports, tournaments, activeId, tab: p.tab || 'teams' };
 }
 function load(){
   try{
-    const raw = localStorage.getItem(LS_KEY);
-    if(raw){
-      const p = JSON.parse(raw);
-      const d = defaultState();
-      return { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
-    }
+    const raw = localStorage.getItem(LS_KEY) || localStorage.getItem(LS_KEY_OLD);
+    if(raw) return normalizeRoot(JSON.parse(raw));
   }catch(e){}
-  return defaultState();
+  return defaultRoot();
 }
-let S = load();
+const activeT = () => R.tournaments.find(t => t.id === R.activeId) || R.tournaments[0];
+function setRoot(p){ R = normalizeRoot(p); S = activeT(); }
+
+/* Nhập dữ liệu: file nhiều giải → thay toàn bộ; file cũ 1 giải → nạp vào giải hiện tại */
+function applyImported(p){
+  if(p && Array.isArray(p.tournaments)){ setRoot(p); return 'all'; }
+  Object.assign(S, {
+    teams: Array.isArray(p.teams) ? p.teams : [],
+    groups: Array.isArray(p.groups) ? p.groups : [],
+    matches: Array.isArray(p.matches) ? p.matches : [],
+    settings: { ...defaultSettings(), ...(p.settings || {}) }
+  });
+  return 'current';
+}
+
+R = load();
+S = activeT();
 let fileHandle = null;
 
 async function writeToFileHandle(dataObj){
@@ -308,9 +463,9 @@ async function writeToFileHandle(dataObj){
 }
 
 const save = () => {
-  localStorage.setItem(LS_KEY, JSON.stringify(S));
+  localStorage.setItem(LS_KEY, JSON.stringify(R));
   if(fileHandle){
-    writeToFileHandle(S);
+    writeToFileHandle(R);
   }
 };
 
@@ -324,7 +479,7 @@ async function saveDataToFolder(){
           accept: { 'application/json': ['.json'] }
         }]
       });
-      const ok = await writeToFileHandle(S);
+      const ok = await writeToFileHandle(R);
       if(ok){
         toast('Đã lưu dữ liệu vào thư mục & bật tự động đồng bộ!', 'ok');
         return;
@@ -333,7 +488,7 @@ async function saveDataToFolder(){
       if(err.name === 'AbortError') return;
     }
   }
-  const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+  const blob = new Blob([JSON.stringify(R, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
   a.download = 'data.json';
@@ -354,12 +509,11 @@ async function loadDataFromFolder(){
       const file = await handle.getFile();
       const text = await file.text();
       const p = JSON.parse(text);
-      const d = defaultState();
-      S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
-      fileHandle = handle;
+      const scope = applyImported(p);
+      fileHandle = scope === 'all' ? handle : null;
       save();
       render();
-      toast('Đã nạp dữ liệu từ file trong thư mục!', 'ok');
+      toast(scope === 'all' ? 'Đã nạp dữ liệu từ file trong thư mục!' : `Đã nạp dữ liệu cũ vào "${S.name}"`, 'ok');
       return;
     }catch(err){
       if(err.name === 'AbortError') return;
@@ -368,15 +522,17 @@ async function loadDataFromFolder(){
   document.getElementById('jsonInput')?.click();
 }
 
+const hasData = p => !!p && (((p.teams || []).length > 0) || ((p.groups || []).length > 0) ||
+  (Array.isArray(p.tournaments) && p.tournaments.some(t => (t.teams || []).length || (t.groups || []).length)));
+
 async function autoLoadFromFolderJson(){
-  if(S.teams.length > 0 || S.groups.length > 0) return;
+  if(hasData(R)) return;
   try{
     const res = await fetch('./data.json');
     if(res.ok){
       const p = await res.json();
-      if(p && typeof p === 'object' && (p.teams || p.groups)){
-        const d = defaultState();
-        S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
+      if(p && typeof p === 'object' && hasData(p)){
+        setRoot(p);
         save();
         render();
       }
@@ -452,6 +608,223 @@ document.addEventListener('keydown', e => {
 });
 
 /* =========================================================
+   TOURNAMENTS (bộ môn · giải nam / giải nữ)
+   ========================================================= */
+const SPORT_ICONS = ['⚽','🏐','🏀','🏸','🏓','🎾','🏈','⚾','🏑','🏒','🪢','♟️','🏃','🏊','🚴','🥋','🎯','🏹','🎱','🏅'];
+
+function switchTournament(id){
+  if(!R.tournaments.some(t => t.id === id)) return;
+  R.activeId = id; S = activeT();
+  searchQ = ''; fGroup = 'all';
+  syncBracket(); save(); render();
+}
+
+function tournamentStats(t){
+  const done = t.matches.filter(m => m.hs != null && m.as != null).length;
+  const ko = t.matches.filter(m => m.stage === 'ko' && !m.thirdPlace);
+  let champion = null;
+  if(ko.length){
+    const maxR = Math.max(...ko.map(m => m.round));
+    const w = winnerOf(ko.find(m => m.round === maxR));
+    if(w) champion = (t.teams.find(x => x.id === w) || {}).name || null;
+  }
+  return { teams: t.teams.length, groups: t.groups.length, matches: t.matches.length, done, champion };
+}
+
+const genderBadge = g => `<span class="gbadge ${g}">${GENDERS[g]?.icon || ''} ${esc(genderLabel(g))}</span>`;
+
+function openTournamentModal(tid, preset, onDone){
+  const editing = !!tid;
+  const t = editing ? R.tournaments.find(x => x.id === tid) : null;
+  if(editing && !t) return;
+  const taken = (sp, g) => R.tournaments.some(x => x.sportId === sp && x.gender === g && x.id !== tid);
+  const freeGender = sp => Object.keys(GENDERS).find(g => !taken(sp, g));
+
+  let sportId = editing ? t.sportId : (preset?.sportId || S.sportId);
+  let gender  = editing ? t.gender  : (preset?.gender  || S.gender || 'male');
+  if(!editing && taken(sportId, gender)){
+    const g = freeGender(sportId);
+    if(g) gender = g;
+    else{
+      const sp = R.sports.find(s => freeGender(s.id));
+      if(!sp) return toast('Tất cả bộ môn đã có đủ giải nam & nữ. Hãy thêm bộ môn mới.', 'err');
+      sportId = sp.id; gender = freeGender(sp.id);
+    }
+  }
+  let nameTouched = editing;
+
+  const ov = openModal({
+    title: editing ? 'Sửa giải đấu' : 'Tạo giải đấu mới',
+    width: 620,
+    body: `
+      <div class="field"><span>Bộ môn</span><div class="choice-grid" id="t-sports"></div></div>
+      <div class="field"><span>Nội dung</span><div class="choice-grid two" id="t-genders"></div></div>
+      <label class="field"><span>Tên giải *</span>
+        <input class="input" id="t-name" placeholder="VD: Giải bóng đá nam"></label>
+      ${editing ? '' : `<label class="check"><input type="checkbox" id="t-copy" checked> Dùng cài đặt tính điểm của giải hiện tại (${esc(S.name)})</label>`}`,
+    footer: `<button class="btn ghost" data-close>Hủy</button>
+             <button class="btn primary" id="t-save">${editing ? 'Lưu thay đổi' : 'Tạo giải'}</button>`
+  });
+  const nameEl = ov.querySelector('#t-name');
+  nameEl.value = editing ? t.name : autoName(sportId, gender);
+  nameEl.addEventListener('input', () => nameTouched = true);
+
+  const draw = () => {
+    ov.querySelector('#t-sports').innerHTML = R.sports.map(s => {
+      const full = !freeGender(s.id);
+      return `<button type="button" class="choice ${s.id === sportId ? 'active' : ''} ${full ? 'full' : ''}" data-sp="${esc(s.id)}">
+        <span class="ic">${esc(s.icon)}</span>${esc(s.name)}${full ? '<small>Đã đủ giải</small>' : ''}</button>`;
+    }).join('');
+    ov.querySelector('#t-genders').innerHTML = Object.entries(GENDERS).map(([k, g]) => {
+      const dis = taken(sportId, k);
+      return `<button type="button" class="choice g-${k} ${k === gender ? 'active' : ''}" data-g="${k}" ${dis ? 'disabled' : ''}>
+        <span class="ic">${g.icon}</span>Giải ${g.label.toLowerCase()}${dis ? '<small>Đã có giải</small>' : ''}</button>`;
+    }).join('');
+    if(!nameTouched) nameEl.value = autoName(sportId, gender);
+  };
+  draw();
+
+  ov.querySelector('#t-sports').addEventListener('click', e => {
+    const b = e.target.closest('[data-sp]'); if(!b) return;
+    sportId = b.dataset.sp;
+    if(taken(sportId, gender)) gender = freeGender(sportId) || gender;
+    draw();
+  });
+  ov.querySelector('#t-genders').addEventListener('click', e => {
+    const b = e.target.closest('[data-g]'); if(!b || b.disabled) return;
+    gender = b.dataset.g; draw();
+  });
+  ov.querySelector('#t-save').addEventListener('click', () => {
+    const name = nameEl.value.trim();
+    if(!name) return toast('Vui lòng nhập tên giải', 'err');
+    if(taken(sportId, gender)) return toast(`${sportOf(sportId).name} đã có giải ${genderLabel(gender).toLowerCase()}`, 'err');
+    if(editing){
+      Object.assign(t, { name, sportId, gender });
+      save(); render(); ov.remove();
+      toast('Đã cập nhật giải đấu', 'ok');
+    }else{
+      const nt = makeTournament(sportId, gender, name);
+      if(ov.querySelector('#t-copy')?.checked) nt.settings = { ...S.settings };
+      R.tournaments.push(nt);
+      ov.remove();
+      switchTournament(nt.id);
+      toast(`Đã tạo "${name}"`, 'ok');
+    }
+    onDone && onDone();
+  });
+}
+
+function deleteTournament(id){
+  const t = R.tournaments.find(x => x.id === id);
+  if(!t) return false;
+  if(R.tournaments.length <= 1){ toast('Cần giữ lại ít nhất 1 giải đấu', 'err'); return false; }
+  if(!confirm(`Xóa "${t.name}"?\nToàn bộ ${t.teams.length} đội và ${t.matches.length} trận đấu của giải sẽ bị xóa vĩnh viễn.`)) return false;
+  R.tournaments = R.tournaments.filter(x => x.id !== id);
+  if(R.activeId === id) R.activeId = R.tournaments[0].id;
+  S = activeT(); save(); render(); toast('Đã xóa giải đấu', 'ok');
+  return true;
+}
+
+function openSportModal(onDone){
+  let icon = '🏅';
+  const ov = openModal({
+    title: 'Thêm bộ môn',
+    width: 480,
+    body: `
+      <label class="field"><span>Tên bộ môn *</span>
+        <input class="input" id="sp-name" placeholder="VD: Cờ vua, Điền kinh, Pickleball..."></label>
+      <div class="field"><span>Biểu tượng</span><div class="icon-pick" id="sp-icons"></div></div>`,
+    footer: `<button class="btn ghost" data-close>Hủy</button><button class="btn primary" id="sp-save">Thêm bộ môn</button>`
+  });
+  const box = ov.querySelector('#sp-icons');
+  const draw = () => box.innerHTML = SPORT_ICONS.map(i => `<button type="button" class="ip ${i === icon ? 'active' : ''}" data-i="${i}">${i}</button>`).join('');
+  draw();
+  box.addEventListener('click', e => { const b = e.target.closest('[data-i]'); if(b){ icon = b.dataset.i; draw(); } });
+  ov.querySelector('#sp-name').focus();
+  ov.querySelector('#sp-save').addEventListener('click', () => {
+    const name = ov.querySelector('#sp-name').value.trim();
+    if(!name) return toast('Vui lòng nhập tên bộ môn', 'err');
+    if(R.sports.some(s => norm(s.name) === norm(name))) return toast('Bộ môn đã tồn tại', 'err');
+    R.sports.push({ id: 'sp_' + uid(), name, icon });
+    save(); ov.remove();
+    toast(`Đã thêm bộ môn ${name}`, 'ok');
+    onDone && onDone();
+  });
+}
+
+function openManageModal(){
+  const ov = openModal({
+    title: 'Quản lý bộ môn & giải đấu',
+    width: 820,
+    body: `<div id="mg-body"></div>`,
+    footer: `<button class="btn ghost" data-mg="add-sport">+ Thêm bộ môn</button>
+             <div class="spacer"></div>
+             <button class="btn ghost" data-close>Đóng</button>
+             <button class="btn primary" data-mg="add-t">+ Tạo giải mới</button>`
+  });
+  const box = ov.querySelector('#mg-body');
+  const draw = () => {
+    const all = R.tournaments.map(tournamentStats);
+    const sum = k => all.reduce((a, s) => a + s[k], 0);
+    const usedSports = R.sports.filter(sp => R.tournaments.some(t => t.sportId === sp.id)).length;
+    box.innerHTML = `
+      <div class="mg-stats">
+        <div><b>${usedSports}</b><span>Bộ môn</span></div>
+        <div><b>${R.tournaments.length}</b><span>Giải đấu</span></div>
+        <div><b>${sum('teams')}</b><span>Đội tham gia</span></div>
+        <div><b>${sum('done')}/${sum('matches')}</b><span>Trận đã đá</span></div>
+      </div>
+      ${R.sports.map(sp => {
+        const ts = R.tournaments.filter(t => t.sportId === sp.id);
+        return `<section class="sport-sec">
+          <div class="sport-head">
+            <span class="sport-ic">${esc(sp.icon)}</span>
+            <h4>${esc(sp.name)}</h4>
+            <span class="muted small">${ts.length ? ts.length + ' giải' : 'Chưa có giải'}</span>
+            <span class="spacer"></span>
+            ${!ts.length ? `<button class="icon-btn" data-mg="del-sport" data-id="${esc(sp.id)}" title="Xóa bộ môn">🗑️</button>` : ''}
+          </div>
+          <div class="tgrid">
+            ${Object.keys(GENDERS).map(g => {
+              const t = ts.find(x => x.gender === g);
+              if(!t) return `<button class="tslot" data-mg="new-t" data-sport="${esc(sp.id)}" data-gender="${g}">+ Tạo giải ${genderLabel(g).toLowerCase()}</button>`;
+              const st = tournamentStats(t);
+              return `<div class="tcard ${t.id === S.id ? 'active' : ''}" data-mg="open-t" data-id="${t.id}" title="Mở giải này">
+                <div class="tc-top">${genderBadge(g)}${t.id === S.id ? '<span class="badge">Đang mở</span>' : ''}<span class="spacer"></span>
+                  <button class="icon-btn" data-mg="edit-t" data-id="${t.id}" title="Sửa">✏️</button>
+                  <button class="icon-btn" data-mg="del-t" data-id="${t.id}" title="Xóa">🗑️</button>
+                </div>
+                <div class="tc-name">${esc(t.name)}</div>
+                <div class="tc-stats"><span><b>${st.teams}</b> đội</span><span><b>${st.groups}</b> bảng</span><span><b>${st.done}/${st.matches}</b> trận</span></div>
+                ${st.champion ? `<div class="tc-champ">🏆 ${esc(st.champion)}</div>` : ''}
+              </div>`;
+            }).join('')}
+          </div>
+        </section>`;
+      }).join('')}`;
+  };
+  draw();
+
+  ov.addEventListener('click', e => {
+    const b = e.target.closest('[data-mg]'); if(!b) return;
+    const act = b.dataset.mg, id = b.dataset.id;
+    if(act === 'open-t'){ ov.remove(); if(id !== S.id) switchTournament(id); }
+    else if(act === 'edit-t') openTournamentModal(id, null, draw);
+    else if(act === 'del-t'){ if(deleteTournament(id)) draw(); }
+    else if(act === 'new-t'){ ov.remove(); openTournamentModal(null, { sportId: b.dataset.sport, gender: b.dataset.gender }); }
+    else if(act === 'add-t'){ ov.remove(); openTournamentModal(null); }
+    else if(act === 'add-sport') openSportModal(draw);
+    else if(act === 'del-sport'){
+      const sp = R.sports.find(s => s.id === id);
+      if(sp && confirm(`Xóa bộ môn "${sp.name}"?`)){
+        R.sports = R.sports.filter(s => s.id !== id);
+        save(); render(); draw();
+      }
+    }
+  });
+}
+
+/* =========================================================
    TEAM LOGIC
    ========================================================= */
 function openTeamModal(teamId){
@@ -460,18 +833,18 @@ function openTeamModal(teamId){
   let members = (t.members || []).slice();
 
   const ov = openModal({
-    title: editing ? 'Sửa đội bóng' : 'Thêm đội bóng',
+    title: (editing ? 'Sửa đội' : 'Thêm đội') + ' · ' + S.name,
     body: `
       <div class="grid2">
         <label class="field"><span>Tên đội bóng *</span>
           <input class="input" id="f-name" value="${esc(t.name)}" placeholder="VD: FC Sao Đêm"></label>
-        <label class="field"><span>Đội trưởng *</span>
-          <input class="input" id="f-captain" value="${esc(t.captain)}" placeholder="Nguyễn Văn A"></label>
+        <label class="field"><span>Đội trưởng (tv1) *</span>
+          <input class="input" id="f-captain" value="${esc(t.captain)}" placeholder="Nguyễn Văn A (tv1)"></label>
       </div>
       <label class="field"><span>Số điện thoại</span>
         <input class="input" id="f-phone" value="${esc(t.phone)}" placeholder="09xx xxx xxx"></label>
       <div class="field">
-        <span>Thành viên <em>(tối đa 6 người, chưa tính đội trưởng — tổng cộng 7)</em></span>
+        <span>Thành viên <em>(tối đa 9 người, chưa tính đội trưởng — tổng cộng 10: tv1 đến tv10)</em></span>
         <div id="memberList"></div>
         <button class="btn ghost sm" id="addMember" type="button" style="align-self:flex-start">+ Thêm thành viên</button>
       </div>`,
@@ -483,10 +856,10 @@ function openTeamModal(teamId){
   const renderMembers = () => {
     list.innerHTML = members.map((m,i)=>`
       <div class="member-row">
-        <input class="input" data-mi="${i}" value="${esc(m)}" placeholder="Tên thành viên ${i+1}">
+        <input class="input" data-mi="${i}" value="${esc(m)}" placeholder="Thành viên ${i+2} (tv${i+2})">
         <button class="icon-btn" type="button" data-mdel="${i}">✕</button>
       </div>`).join('') || `<div class="muted small" style="padding:4px 0 8px">Chưa có thành viên nào</div>`;
-    ov.querySelector('#addMember').style.display = members.length >= 6 ? 'none' : '';
+    ov.querySelector('#addMember').style.display = members.length >= 9 ? 'none' : '';
   };
   renderMembers();
 
@@ -499,7 +872,7 @@ function openTeamModal(teamId){
     if(i !== undefined){ members.splice(+i,1); renderMembers(); }
   });
   ov.querySelector('#addMember').addEventListener('click', () => {
-    if(members.length >= 6) return;
+    if(members.length >= 9) return;
     members.push(''); renderMembers();
     const inputs = list.querySelectorAll('input');
     inputs[inputs.length-1]?.focus();
@@ -514,7 +887,7 @@ function openTeamModal(teamId){
     const dup = S.teams.find(x => x.id !== t.id && norm(x.name) === norm(name));
     if(dup) return toast('Tên đội bóng đã tồn tại', 'err');
 
-    const clean = members.map(m=>m.trim()).filter(Boolean).slice(0,6);
+    const clean = members.map(m=>m.trim()).filter(Boolean).slice(0,9);
     if(editing){
       Object.assign(t, { name, captain, phone, members: clean });
     }else{
@@ -543,11 +916,11 @@ function deleteTeam(id){
    EXCEL
    ========================================================= */
 function downloadTemplate(){
-  const header = ['Tên đội bóng','Đội trưởng','SĐT','Thành viên 1','Thành viên 2','Thành viên 3','Thành viên 4','Thành viên 5','Thành viên 6'];
+  const header = ['Tên đội bóng','tv1 (Đội trưởng)','SĐT','tv2','tv3','tv4','tv5','tv6','tv7','tv8','tv9','tv10'];
   const rows = [
     header,
-    ['FC Sao Đêm','Nguyễn Văn A','0901234567','Trần Văn B','Lê Văn C','Phạm Văn D','','',''],
-    ['FC Bình Minh','Trần Thị E','0912345678','Hoàng Văn F','Vũ Văn G','','','','']
+    ['FC Sao Đêm','Nguyễn Văn A','0901234567','Trần Văn B','Lê Văn C','Phạm Văn D','Hoàng Văn E','Vũ Văn F','Đỗ Văn G','Nông Văn H','Lý Văn I','Bùi Văn K'],
+    ['FC Bình Minh','Trần Thị M','0912345678','Hoàng Văn N','Vũ Văn P','','','','','','','']
   ];
   const ws = XLSX.utils.aoa_to_sheet(rows);
   ws['!cols'] = header.map(()=>({wch:20}));
@@ -571,7 +944,7 @@ function importExcel(file){
 
       // detect header
       const first = rows[0].map(c => norm(c));
-      const hasHeader = first.some(c => c.includes('ten doi') || c.includes('team') || c.includes('doi bong'));
+      const hasHeader = first.some(c => c.includes('ten doi') || c.includes('team') || c.includes('doi bong') || c.includes('tv1') || c.includes('tv 1'));
       const headerRow = hasHeader ? first : null;
       const dataRows = hasHeader ? rows.slice(1) : rows;
 
@@ -580,9 +953,9 @@ function importExcel(file){
         idx = { name: -1, captain: -1, phone: -1, members: [] };
         headerRow.forEach((h, i) => {
           if(idx.name < 0 && (h.includes('ten doi') || h.includes('doi bong') || h === 'team' || h === 'doi')) idx.name = i;
-          else if(idx.captain < 0 && (h.includes('doi truong') || h.includes('captain') || h.includes('truong'))) idx.captain = i;
+          else if(idx.captain < 0 && (h.includes('doi truong') || h.includes('captain') || h.includes('truong') || h.includes('tv1') || h.includes('tv 1') || /^tv\s*1\b/.test(h))) idx.captain = i;
           else if(idx.phone < 0 && (h.includes('sdt') || h.includes('phone') || h.includes('dien thoai') || h.includes('so dt'))) idx.phone = i;
-          else if(h.includes('thanh vien') || h.includes('cau thu') || h.includes('member') || h.includes('player') || /^tv\s*\d*$/.test(h)) idx.members.push(i);
+          else if(h.includes('thanh vien') || h.includes('cau thu') || h.includes('member') || h.includes('player') || /^tv\s*\d+$/.test(h) || /^tv\d+$/.test(h)) idx.members.push(i);
         });
         if(idx.name < 0) idx.name = 0;
         if(idx.captain < 0) idx.captain = 1;
@@ -603,7 +976,7 @@ function importExcel(file){
         idx.members.forEach(i => {
           String(r[i] ?? '').split(/[,;\/|]/).forEach(p => {
             const v = p.trim();
-            if(v && members.length < 6) members.push(v);
+            if(v && members.length < 9) members.push(v);
           });
         });
         parsed.push({ name, captain, phone, members });
@@ -616,7 +989,7 @@ function importExcel(file){
       const skipped = parsed.length - fresh.length;
 
       const ov = openModal({
-        title: `Xem trước nhập Excel (${fresh.length} đội)`,
+        title: `Nhập Excel vào "${S.name}" (${fresh.length} đội)`,
         width: 660,
         body: `
           ${skipped ? `<div class="badge gray" style="margin-bottom:12px">Bỏ qua ${skipped} đội trùng tên</div>` : ''}
@@ -653,6 +1026,21 @@ function exportExcelResults(){
 
   const wb = XLSX.utils.book_new();
 
+  // Tiêu đề chung ở đầu mỗi sheet: tên sự kiện, tên giải, bộ môn, nội dung
+  const sp = sportOf(S.sportId);
+  const meta = [
+    [(R.name || '').toUpperCase()],
+    [`Giải: ${S.name}`],
+    [`Bộ môn: ${sp.name}  ·  Nội dung: ${genderLabel(S.gender)}  ·  Ngày xuất: ${fmtDate(todayISO())}`],
+    []
+  ];
+  const buildSheet = rows => {
+    const ncol = Math.max(1, ...rows.map(r => r.length));
+    const ws = XLSX.utils.aoa_to_sheet([...meta, ...rows]);
+    ws['!merges'] = [0, 1, 2, meta.length].map(r => ({ s: { r, c: 0 }, e: { r, c: ncol - 1 } }));
+    return ws;
+  };
+
   // Sheet 1: Bảng Xếp Hạng Vòng Bảng
   const stHead = ['BẢNG XẾP HẠNG VÒNG BẢNG'];
   const stCols = ['STT', 'Bảng đấu', 'Tên đội bóng', 'Đội trưởng', 'Số điện thoại', 'Trận', 'Thắng', 'Hòa', 'Thua', 'BT', 'BB', 'HS', 'Điểm'];
@@ -676,7 +1064,7 @@ function exportExcelResults(){
   } else {
     stRows.push(['Chưa có bảng đấu nào']);
   }
-  const wsSt = XLSX.utils.aoa_to_sheet(stRows);
+  const wsSt = buildSheet(stRows);
   wsSt['!cols'] = [{wch:6}, {wch:12}, {wch:22}, {wch:18}, {wch:14}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:10}];
   XLSX.utils.book_append_sheet(wb, wsSt, 'Bang Xep Hang');
 
@@ -734,7 +1122,7 @@ function exportExcelResults(){
       getTeamTOResult(t.id)
     ]);
   });
-  const wsTs = XLSX.utils.aoa_to_sheet(tsRows);
+  const wsTs = buildSheet(tsRows);
   wsTs['!cols'] = [{wch:6}, {wch:22}, {wch:18}, {wch:14}, {wch:8}, {wch:12}, {wch:10}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:8}, {wch:10}, {wch:10}, {wch:20}];
   XLSX.utils.book_append_sheet(wb, wsTs, 'Thong Ke Doi Bong');
 
@@ -774,13 +1162,13 @@ function exportExcelResults(){
       done ? 'Đã kết thúc' : 'Chưa thi đấu'
     ]);
   });
-  const wsM = XLSX.utils.aoa_to_sheet(mRows);
+  const wsM = buildSheet(mRows);
   wsM['!cols'] = [{wch:6}, {wch:14}, {wch:14}, {wch:12}, {wch:8}, {wch:10}, {wch:20}, {wch:10}, {wch:20}, {wch:20}, {wch:12}, {wch:10}, {wch:10}, {wch:20}, {wch:16}, {wch:24}, {wch:14}];
   XLSX.utils.book_append_sheet(wb, wsM, 'Ket Qua Tran Dau');
 
   // Sheet 4: Danh Sách Đội & Cầu Thủ
-  const rHead = ['DANH SÁCH CÁC ĐỘI BÓNG VÀ CẦU THỦ'];
-  const rCols = ['STT', 'Tên đội bóng', 'Đội trưởng', 'Số điện thoại', 'Thành viên 1', 'Thành viên 2', 'Thành viên 3', 'Thành viên 4', 'Thành viên 5', 'Thành viên 6'];
+  const rHead = ['DANH SÁCH CÁC ĐỘI BÓNG VÀ CẦU THỦ (TV1: ĐỘI TRƯỞNG, TV2 - TV10: THÀNH VIÊN)'];
+  const rCols = ['STT', 'Tên đội bóng', 'tv1 (Đội trưởng)', 'Số điện thoại', 'tv2', 'tv3', 'tv4', 'tv5', 'tv6', 'tv7', 'tv8', 'tv9', 'tv10'];
   const rRows = [rHead, rCols];
 
   S.teams.forEach((t, idx) => {
@@ -790,16 +1178,17 @@ function exportExcelResults(){
       t.name,
       t.captain || '—',
       t.phone || '—',
-      mems[0] || '', mems[1] || '', mems[2] || '', mems[3] || '', mems[4] || '', mems[5] || ''
+      mems[0] || '', mems[1] || '', mems[2] || '', mems[3] || '', mems[4] || '', mems[5] || '', mems[6] || '', mems[7] || '', mems[8] || ''
     ]);
   });
-  const wsR = XLSX.utils.aoa_to_sheet(rRows);
-  wsR['!cols'] = [{wch:6}, {wch:22}, {wch:18}, {wch:14}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}];
+  const wsR = buildSheet(rRows);
+  wsR['!cols'] = [{wch:6}, {wch:22}, {wch:18}, {wch:14}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}, {wch:16}];
   XLSX.utils.book_append_sheet(wb, wsR, 'Danh Sach Doi & Cau Thu');
 
-  const fileName = `Ket_qua_${norm(S.name).replace(/\s+/g, '_')}_${todayISO()}.xlsx`;
+  const slug = s => norm(s).replace(/[^a-z0-9]+/g, '_').replace(/^_+|_+$/g, '');
+  const fileName = `Ket_qua_${slug(S.name) || 'giai_dau'}_${todayISO()}.xlsx`;
   XLSX.writeFile(wb, fileName);
-  toast('Đã xuất file Excel kết quả giải đấu!', 'ok');
+  toast(`Đã xuất Excel kết quả: ${S.name}`, 'ok');
 }
 
 /* =========================================================
@@ -1212,6 +1601,32 @@ function emptyState(icon, title, desc, action){
   </div>`;
 }
 
+/* ----- Thanh chọn bộ môn / nam - nữ ----- */
+function viewContext(){
+  const sports = R.sports.filter(sp => R.tournaments.some(t => t.sportId === sp.id));
+  const pills = sports.map(sp => {
+    const n = R.tournaments.filter(t => t.sportId === sp.id).length;
+    return `<button class="sport-pill ${sp.id === S.sportId ? 'active' : ''}" data-act="ctx-sport" data-sport="${esc(sp.id)}" title="${esc(sp.name)}">
+      <span class="ic">${esc(sp.icon)}</span>${esc(sp.name)}<span class="cnt">${n}</span></button>`;
+  }).join('');
+  const genders = Object.entries(GENDERS).map(([k, g]) => {
+    const t = R.tournaments.find(x => x.sportId === S.sportId && x.gender === k);
+    return t
+      ? `<button class="gbtn ${k} ${t.id === S.id ? 'active' : ''}" data-act="ctx-gender" data-id="${t.id}">${g.icon} ${g.label}</button>`
+      : `<button class="gbtn missing" data-act="ctx-add" data-sport="${esc(S.sportId)}" data-gender="${k}" title="Tạo giải ${g.label.toLowerCase()} cho ${esc(sportOf(S.sportId).name)}">+ ${g.label}</button>`;
+  }).join('');
+  return `
+    <div class="sport-pills">${pills}</div>
+    <span class="vsep"></span>
+    <div class="gseg">${genders}</div>
+    <span class="spacer"></span>
+    <div class="ctx-current"><span class="muted small">Đang quản lý</span><b>${esc(S.name)}</b></div>
+    <div class="ctx-actions">
+      <button class="btn sm ghost" data-act="ctx-add">+ Giải mới</button>
+      <button class="btn sm ghost" data-act="ctx-manage">🗂️ Quản lý giải</button>
+    </div>`;
+}
+
 /* ----- Đội bóng ----- */
 function viewTeams(){
   const q = norm(searchQ);
@@ -1220,8 +1635,8 @@ function viewTeams(){
   return `
   <div class="page-head">
     <div>
-      <h1>Đội bóng</h1>
-      <p class="muted">${S.teams.length} đội · tối đa 7 thành viên mỗi đội (bao gồm đội trưởng)</p>
+      <h1>Đội thi đấu</h1>
+      <p class="muted">${S.teams.length} đội · tối đa 10 thành viên mỗi đội (bao gồm đội trưởng)</p>
     </div>
     <div class="actions">
       <button class="btn ghost" data-act="save-folder">📁 Lưu vào thư mục</button>
@@ -1265,10 +1680,10 @@ function teamCard(t){
       </div>
     </div>
     <div class="chips">
-      <span class="chip cap">${esc(t.captain || '—')} <em>ĐT</em></span>
-      ${members.map(m => `<span class="chip">${esc(m)}</span>`).join('')}
+      <span class="chip cap">${esc(t.captain || '—')} <em>tv1</em></span>
+      ${members.map((m, idx) => `<span class="chip">${esc(m)} <em style="font-size:10.5px;opacity:0.65">tv${idx+2}</em></span>`).join('')}
     </div>
-    <div class="muted small mt">${total}/7 thành viên</div>
+    <div class="muted small mt">${total}/10 thành viên</div>
   </div>`;
 }
 
@@ -1521,13 +1936,22 @@ function bracketMatch(m){
 
 /* ----- Cài đặt ----- */
 function viewSettings(){
+  const sp = sportOf(S.sportId);
   return `
   <div class="page-head">
-    <div><h1>Cài đặt giải đấu</h1><p class="muted">Thể thức tính điểm và cấu hình chung</p></div>
+    <div><h1>Cài đặt giải đấu</h1><p class="muted">Cấu hình riêng cho ${esc(S.name)}</p></div>
   </div>
 
   <div class="card" style="max-width:640px;margin-bottom:16px">
-    <div class="card-head"><h3>Thông tin giải</h3></div>
+    <div class="card-head"><h3>Thông tin giải</h3>
+      <button class="btn sm ghost" data-act="edit-current-t">✏️ Đổi bộ môn / nội dung</button></div>
+    <div class="cur-t">
+      <span class="sport-ic">${esc(sp.icon)}</span>
+      <div><b>${esc(sp.name)}</b> ${genderBadge(S.gender)}
+        <div class="muted small">Đội, lịch đấu và cài đặt bên dưới chỉ áp dụng cho giải này</div></div>
+    </div>
+    <label class="field"><span>Tên sự kiện / hội thao <em>(dùng chung cho mọi giải)</em></span>
+      <input class="input" id="set-event" value="${esc(R.name)}"></label>
     <label class="field"><span>Tên giải đấu</span>
       <input class="input" id="set-name" value="${esc(S.name)}"></label>
   </div>
@@ -1556,7 +1980,7 @@ function viewSettings(){
   <div class="card" style="max-width:640px;margin-bottom:16px">
     <div class="card-head"><h3>📊 Báo cáo & Xuất kết quả Excel</h3></div>
     <p class="muted small" style="margin-bottom:14px">
-      Xuất toàn bộ bảng xếp hạng, thống kê đội bóng, kết quả các trận đấu và danh sách cầu thủ ra file Excel (.xlsx).
+      Xuất bảng xếp hạng, thống kê đội, kết quả trận đấu và danh sách cầu thủ của <b>${esc(S.name)}</b> ra file Excel (.xlsx). Tên sự kiện, tên giải, bộ môn và nội dung được ghi ở đầu mỗi sheet.
     </p>
     <div class="actions">
       <button class="btn primary" data-act="export-excel-results">📊 Xuất file Excel kết quả bóng đá</button>
@@ -1565,10 +1989,11 @@ function viewSettings(){
 
   <div class="card" style="max-width:640px">
     <div class="card-head"><h3>Dữ liệu</h3></div>
-    <p class="muted small" style="margin-bottom:14px">Toàn bộ dữ liệu được lưu trong trình duyệt này. Hãy sao lưu định kỳ.</p>
+    <p class="muted small" style="margin-bottom:14px">Dữ liệu của tất cả bộ môn & giải đấu được lưu trong trình duyệt này. File JSON xuất ra chứa toàn bộ các giải — hãy sao lưu định kỳ.</p>
     <div class="actions">
       <button class="btn ghost" data-act="export-json">⬇ Xuất dữ liệu (JSON)</button>
       <button class="btn ghost" data-act="import-json">⬆ Nhập dữ liệu</button>
+      <button class="btn danger" data-act="reset-current">🧹 Làm trống giải này</button>
       <button class="btn danger" data-act="reset-all">🗑️ Xóa toàn bộ dữ liệu</button>
     </div>
     <input type="file" id="jsonInput" accept=".json" hidden>
@@ -1579,10 +2004,16 @@ function viewSettings(){
    RENDER
    ========================================================= */
 function render(){
-  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === S.tab));
-  document.getElementById('brandName').textContent = S.name || 'Giải bóng đá';
+  S = activeT();
+  const sp = sportOf(S.sportId);
+  document.querySelectorAll('.tab').forEach(t => t.classList.toggle('active', t.dataset.tab === R.tab));
+  document.getElementById('brandName').textContent = R.name || 'Hội thao';
+  document.getElementById('brandIcon').textContent = sp.icon;
+  document.getElementById('brandSub').textContent = `${sp.name} · ${genderLabel(S.gender)}`;
+  document.getElementById('ctx').innerHTML = viewContext();
+  document.title = `${S.name} · ${R.name}`;
   const views = { teams: viewTeams, groups: viewGroups, schedule: viewSchedule, bracket: viewBracket, settings: viewSettings };
-  document.getElementById('view').innerHTML = (views[S.tab] || viewTeams)();
+  document.getElementById('view').innerHTML = (views[R.tab] || viewTeams)();
 }
 
 /* =========================================================
@@ -1596,13 +2027,25 @@ document.addEventListener('click', e => {
 
   switch(act){
     case 'tab':
-      S.tab = el.dataset.tab; save(); render(); window.scrollTo({top:0,behavior:'smooth'});
+      R.tab = el.dataset.tab; save(); render(); window.scrollTo({top:0,behavior:'smooth'});
       break;
 
     /* Lưu & Xuất */
     case 'save-folder': saveDataToFolder(); break;
     case 'load-folder': loadDataFromFolder(); break;
     case 'export-excel-results': exportExcelResults(); break;
+
+    /* Bộ môn & giải */
+    case 'ctx-sport': {
+      const sp = el.dataset.sport;
+      const t = R.tournaments.find(x => x.sportId === sp && x.gender === S.gender) || R.tournaments.find(x => x.sportId === sp);
+      if(t && t.id !== S.id) switchTournament(t.id);
+      break;
+    }
+    case 'ctx-gender': if(id !== S.id) switchTournament(id); break;
+    case 'ctx-add': openTournamentModal(null, el.dataset.sport ? { sportId: el.dataset.sport, gender: el.dataset.gender } : null); break;
+    case 'ctx-manage': openManageModal(); break;
+    case 'edit-current-t': openTournamentModal(S.id); break;
 
     /* Đội bóng */
     case 'add-team': openTeamModal(null); break;
@@ -1650,26 +2093,32 @@ document.addEventListener('click', e => {
 
     /* Cài đặt */
     case 'save-settings': {
-      S.name = document.getElementById('set-name').value.trim() || 'Giải bóng đá';
+      R.name = document.getElementById('set-event').value.trim() || 'Hội thao';
+      S.name = document.getElementById('set-name').value.trim() || autoName(S.sportId, S.gender);
       S.settings.pointsWin = Math.max(0, +document.getElementById('set-win').value || 0);
       S.settings.pointsDraw = Math.max(0, +document.getElementById('set-draw').value || 0);
       S.settings.qualifiers = Math.max(1, Math.min(4, +document.getElementById('set-qual').value || 1));
       save(); render(); toast('Đã lưu cài đặt', 'ok'); break;
     }
     case 'export-json': {
-      const blob = new Blob([JSON.stringify(S, null, 2)], { type: 'application/json' });
+      const blob = new Blob([JSON.stringify(R, null, 2)], { type: 'application/json' });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
-      a.download = 'giai-bong-da-backup.json';
+      a.download = 'hoi-thao-backup.json';
       a.click();
       URL.revokeObjectURL(a.href);
       toast('Đã xuất dữ liệu', 'ok'); break;
     }
     case 'import-json': document.getElementById('jsonInput')?.click(); break;
     case 'reset-all': {
-      if(!confirm('XÓA TOÀN BỘ dữ liệu giải đấu? Hành động này không thể hoàn tác.')) break;
-      if(!confirm('Bạn chắc chắn chứ? Toàn bộ đội bóng, lịch đấu và kết quả sẽ bị xóa.')) break;
-      S = defaultState(); save(); render(); toast('Đã xóa toàn bộ dữ liệu', 'ok'); break;
+      if(!confirm('XÓA TOÀN BỘ dữ liệu của TẤT CẢ bộ môn và giải đấu? Hành động này không thể hoàn tác.')) break;
+      if(!confirm('Bạn chắc chắn chứ? Toàn bộ giải, đội, lịch đấu và kết quả sẽ bị xóa.')) break;
+      setRoot(defaultRoot()); save(); render(); toast('Đã xóa toàn bộ dữ liệu', 'ok'); break;
+    }
+    case 'reset-current': {
+      if(!confirm(`Xóa toàn bộ đội, bảng đấu và trận đấu của "${S.name}"?`)) break;
+      Object.assign(S, { teams: [], groups: [], matches: [] });
+      save(); render(); toast('Đã làm trống giải hiện tại', 'ok'); break;
     }
   }
 });
@@ -1689,9 +2138,9 @@ document.addEventListener('change', e => {
     r.onload = ev => {
       try{
         const p = JSON.parse(ev.target.result);
-        const d = defaultState();
-        S = { ...d, ...p, settings: { ...d.settings, ...(p.settings||{}) } };
-        save(); render(); toast('Đã nhập dữ liệu', 'ok');
+        const scope = applyImported(p);
+        save(); render();
+        toast(scope === 'all' ? 'Đã nhập dữ liệu tất cả giải' : `Đã nhập dữ liệu vào "${S.name}"`, 'ok');
       }catch(err){ toast('File không hợp lệ', 'err'); }
     };
     r.readAsText(t.files[0]);
